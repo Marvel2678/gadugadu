@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "my-expo-app",
-    "slug": "my-expo-app",
+    "name": "GaduGadu",
+    "slug": "GaduGadu",
+    "scheme": "gadugadu",
     "version": "1.0.0",
-
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -15,7 +15,7 @@
     "plugins": [],
 
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon.jpg",
 
     "userInterfaceStyle": "light",
 
