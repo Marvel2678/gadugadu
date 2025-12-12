@@ -6,6 +6,7 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     avatar_url TEXT,
     online BOOLEAN DEFAULT FALSE,
+    refreshToken TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
 

@@ -1,14 +1,13 @@
 import pg from "pg";
 import fs from "fs";
+import dotenv from "dotenv";
 
-export default async function ConnectToDatabase() {
-  const dbName = process.env.DATABASE_NAME;
-
+export default async function ConnectToDatabase(config) {
   // 1 - connect to postgres (admin connection)
   const adminClient = new pg.Client({
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    host: process.env.DATABASE_HOST,
+    user: config.DATABASE_USER,
+    password: config.DATABASE_PASSWORD,
+    host: config.DATABASE_HOST,
     port: 5432,
     database: "postgres",
   });
@@ -18,13 +17,22 @@ export default async function ConnectToDatabase() {
 
     // 2 - check if database exists
     const result = await adminClient.query(
-      `SELECT 1 FROM pg_database WHERE datname='${dbName}'`
+      `SELECT 1 FROM pg_database WHERE datname='${config.DATABASE_NAME}'`
     );
 
     if (result.rowCount === 0) {
       console.log(`Database "${dbName}" not found. Creating...`);
       await adminClient.query(`CREATE DATABASE ${dbName}`);
       console.log(`Database "${dbName}" created successfully`);
+    } else {
+      const db = new pg.Pool({
+        user: config.DATABASE_USER,
+        password: config.DATABASE_PASSWORD,
+        host: config.DATABASE_HOST,
+        port: 5432,
+        database: config.DATABASE_NAME,
+      });
+      return db;
     }
   } catch (err) {
     console.error("Admin connection error:", err);
@@ -35,16 +43,16 @@ export default async function ConnectToDatabase() {
 
   // 3 - connect to your new database
   const client = new pg.Client({
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    host: process.env.DATABASE_HOST,
+    user: config.DATABASE_USER,
+    password: config.DATABASE_PASSWORD,
+    host: config.DATABASE_HOST,
     port: 5432,
-    database: dbName,
+    database: config.DATABASE_NAME,
   });
 
   try {
     await client.connect();
-    console.log(`Connected to database "${dbName}"`);
+    console.log(`Connected to database "${config.DATABASE_NAME}"`);
 
     // 4 - apply schema
     const schema = fs.readFileSync("./database.sql", "utf8");
@@ -52,13 +60,13 @@ export default async function ConnectToDatabase() {
     console.log("Schema applied successfully");
 
     const db = new pg.Pool({
-      user: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
-      host: process.env.DATABASE_HOST,
+      user: config.DATABASE_USER,
+      password: config.DATABASE_PASSWORD,
+      host: config.DATABASE_HOST,
       port: 5432,
-      database: dbName,
+      database: config.DATABASE_NAME,
     });
-    return client;
+    return db;
   } catch (err) {
     console.error("Main DB connection error:", err);
   }

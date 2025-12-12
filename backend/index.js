@@ -1,19 +1,21 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import ConnectToDatabase from "./db.js";
-import SetupForServer from "./config.js";
+import SetupForServer from "./config/config.js";
+import userRouter from "./routes/userRouter.js";
+import { loadConfig } from "./config/serverConfiguration.js";
 
 const env = await SetupForServer();
-console.log(env);
-dotenv.config({ path: `./${env}` });
+
+const ServerConfiguration = loadConfig(env);
 const app = express();
+export const db = await ConnectToDatabase(ServerConfiguration);
 
 app.use(express.json());
 app.use(cors());
-export const db = await ConnectToDatabase();
+app.use("/users", userRouter);
 
-const PORT = process.env.SERVER_PORT || 5000;
+const PORT = ServerConfiguration.SERVER_PORT || 5000;
 
 app.listen(PORT, () => {
   console.log("Server is listening on port: ", PORT);
