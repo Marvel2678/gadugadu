@@ -31,3 +31,4 @@ CREATE TABLE messages (
     text TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
+

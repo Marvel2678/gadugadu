@@ -21,9 +21,9 @@ export default async function ConnectToDatabase(config) {
     );
 
     if (result.rowCount === 0) {
-      console.log(`Database "${dbName}" not found. Creating...`);
-      await adminClient.query(`CREATE DATABASE ${dbName}`);
-      console.log(`Database "${dbName}" created successfully`);
+      console.log(`Database "${config.DATABASE_NAME}" not found. Creating...`);
+      await adminClient.query(`CREATE DATABASE ${config.DATABASE_NAME}`);
+      console.log(`Database "${config.DATABASE_NAME}" created successfully`);
     } else {
       const db = new pg.Pool({
         user: config.DATABASE_USER,

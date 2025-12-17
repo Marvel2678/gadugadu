@@ -24,7 +24,7 @@ export const RegisterUser = async (req, res) => {
     email,
   ]);
 
-  console.log(" count", userExists.rowCount);
+  console.log("count", userExists.rowCount);
   if (userExists.rowCount == 1) {
     return res.status(400).json({
       ok: false,
@@ -62,8 +62,10 @@ export const LoginUser = async (req, res) => {
   if (!valid)
     return res.status(401).json({ message: "Incorrect email or password" });
 
-  const accessToken = await createAccessToken(user);
-  const refreshToken = await createRefreshToken(user);
+  const accessToken = await createAccessToken(user.id);
+  const refreshToken = await createRefreshToken(user.id);
+
+  await db.query("UPDATE users SET refreshToken = $1", [refreshToken]);
 
   res.json({ ok: true, accessToken, refreshToken });
 };
@@ -79,7 +81,6 @@ export const GetUser = async (req, res) => {
 
 export const RefreshToken = async (req, res) => {
   const incomingRefreshToken = req.body.refreshToken;
-  console.log(incomingRefreshToken);
 
   if (!incomingRefreshToken) {
     return res.json({ ok: false, message: "No refreshToken" });
@@ -90,16 +91,23 @@ export const RefreshToken = async (req, res) => {
     process.env.JWT_SECRET_REFRESH_TOKEN
   );
 
-  const userQuery = await db.query("SELECT email from users WHERE id=$1", [
-    decodedToken.payload.user,
-  ]);
+  const userQuery = await db.query(
+    "SELECT refreshToken from users WHERE id=$1",
+    [decodedToken.id]
+  );
 
   if (userQuery.rowCount == 0) {
     return res.json({ ok: false, message: "Invalid token" });
   }
-
-  if (refreshToken !== userQuery.rows.refreshToken) {
-    return res.json({ ok: false, message: "Refresh token is expired" });
+  if (incomingRefreshToken !== userQuery.rows[0].refreshtoken) {
+    return res
+      .status(403)
+      .json({ ok: false, message: "Refresh token is expired" });
   }
+
+  console.log(decodedToken.id);
+
+  const accessToken = await createAccessToken(decodedToken.id);
+
+  return res.status(200).json({ ok: true, accessToken: accessToken });
 };
-export default router;

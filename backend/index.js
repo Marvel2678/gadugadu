@@ -4,6 +4,7 @@ import ConnectToDatabase from "./db.js";
 import SetupForServer from "./config/config.js";
 import userRouter from "./routes/userRouter.js";
 import { loadConfig } from "./config/serverConfiguration.js";
+import conversationRouter from "./routes/conversationRouter.js";
 
 const env = await SetupForServer();
 
@@ -13,7 +14,8 @@ export const db = await ConnectToDatabase(ServerConfiguration);
 
 app.use(express.json());
 app.use(cors());
-app.use("/users", userRouter);
+app.use("/auth", userRouter);
+app.use("/conversation", conversationRouter);
 
 const PORT = ServerConfiguration.SERVER_PORT || 5000;
 
