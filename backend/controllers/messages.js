@@ -8,9 +8,7 @@ export const getMessagesFromPrivateConversations = async (conversation_id) => {
   return messages;
 };
 
-export const createMessage = async (req, res) => {
-  const { conversation_id, sender_id, type, text } = req.body;
-
+export const createMessage = async (conversation_id, sender_id, type, text) => {
   try {
     if ((!conversation_id, !sender_id || !type || !text)) {
       throw new Error("Something went wrong with sending message");
@@ -21,8 +19,6 @@ export const createMessage = async (req, res) => {
       [conversation_id, sender_id, type, text]
     );
 
-    console.log(message_id);
-
-    return res.json({ ok: true });
+    return text;
   } catch (error) {}
 };

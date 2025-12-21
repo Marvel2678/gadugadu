@@ -7,9 +7,6 @@ import {
 } from "../utils/createTokens.js";
 import jwt from "jsonwebtoken";
 
-const router = express.Router();
-
-// 🔐 rejestracja
 export const RegisterUser = async (req, res) => {
   const { name, username, email, password } = req.body;
 
@@ -45,7 +42,6 @@ export const RegisterUser = async (req, res) => {
   return res.status(201).json({ ok: true, message: "User registered" });
 };
 
-// 🔐 logowanie
 export const LoginUser = async (req, res) => {
   const { email, password } = req.body;
   console.log("tu");
@@ -55,17 +51,26 @@ export const LoginUser = async (req, res) => {
   const user = result.rows[0];
 
   if (!user || user === undefined)
-    return res.status(401).json({ message: "Invalid email" });
+    return res.status(401).json({ ok: false, message: "Invalid email" });
 
   const valid = await bcrypt.compare(password, user.password);
 
   if (!valid)
-    return res.status(401).json({ message: "Incorrect email or password" });
+    return res
+      .status(401)
+      .json({ ok: false, message: "Incorrect email or password" });
 
   const accessToken = await createAccessToken(user.id);
   const refreshToken = await createRefreshToken(user.id);
 
-  await db.query("UPDATE users SET refreshToken = $1", [refreshToken]);
+  await db.query("UPDATE users SET refreshToken = $1 WHERE id=$2", [
+    refreshToken,
+    user.id,
+  ]);
+
+  const userTEST = await db.query("SELECT * FROM users WHERE id=$1", [user.id]);
+
+  console.log(userTEST.rows[0]);
 
   res.json({ ok: true, accessToken, refreshToken });
 };
@@ -110,4 +115,31 @@ export const RefreshToken = async (req, res) => {
   const accessToken = await createAccessToken(decodedToken.id);
 
   return res.status(200).json({ ok: true, accessToken: accessToken });
+};
+
+export const userLogout = async (req, res) => {
+  const user_id = req.user.id;
+
+  const user = await db.query("SELECT refreshToken FROM users WHERE id=$1", [
+    user_id,
+  ]);
+
+  if (user.rowCount === 0) {
+    return res.json({ ok: false, message: "This user doesn't exists" });
+  }
+
+  console.log(user.rows[0]);
+  if (user.rows[0].refreshtoken == null) {
+    return res.json({ ok: false, message: "User logged out" });
+  }
+
+  await db.query(
+    "UPDATE users SET online=FALSE, refreshToken=NULL WHERE id=$1",
+    [user_id]
+  );
+
+  const userTEST = await db.query("SELECT * FROM users WHERE id=$1", [user_id]);
+
+  console.log(userTEST.rows[0]);
+  return res.json({ ok: true, message: "Logged out" });
 };

@@ -1,10 +1,11 @@
-import { View, Text, TextInput, Button } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { View, Text, TextInput, Button } from "react-native";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { socket } from "@/utils/socket";
 
 export default function Login() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
 
   return (
     <View className="bg-brand2 flex-1 items-center justify-center p-6">
@@ -16,9 +17,18 @@ export default function Login() {
           placeholder="Username"
           className="mb-3 rounded bg-white p-2"
         />
-        <Button title="Zaloguj" onPress={() => router.push('/dashboard')} color="#F25912" />
+        <Button
+          title="Zaloguj"
+          onPress={() => {
+            router.push("/dashboard");
+            socket.on("connect", () => {
+              console.log("✅ connected", socket.id);
+            });
+          }}
+          color="#F25912"
+        />
         <View className="mt-3">
-          <Button title="Register" onPress={() => router.push('/register')} />
+          <Button title="Register" onPress={() => router.push("/register")} />
         </View>
       </View>
     </View>

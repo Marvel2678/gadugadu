@@ -2,3 +2,6 @@ ignoredBuiltDependencies:
   - unrs-resolver
 
 nodeLinker: hoisted
+
+onlyBuiltDependencies:
+  - unrs-resolver
