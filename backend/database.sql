@@ -29,6 +29,8 @@ CREATE TABLE messages (
     sender_id INT REFERENCES users(id) ON DELETE CASCADE,
     type VARCHAR(50) DEFAULT 'text',  -- text, image, audio, video
     text TEXT,
+    delivered BOOLEAN,
+    seen BOOLEAN,
     created_at TIMESTAMP DEFAULT NOW()
 );
 

@@ -18,5 +18,6 @@ export function registerAuthSocket(io, socket) {
     console.log("USER_ID ", user_id);
   } catch (error) {
     console.log("ERROR IN AUTH", error);
+    socket.disconnect();
   }
 }
