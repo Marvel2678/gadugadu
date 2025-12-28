@@ -19,13 +19,13 @@ export default function Root() {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center bg-brand3 px-6">
-      <View className="w-full max-w-md rounded-xl bg-brand4 p-6">
+    <SafeAreaView className="flex-1 items-center justify-center bg-brand1 px-6">
+      <View className="w-full max-w-md rounded-xl bg-brand2 p-6">
         <Text className="mb-4 text-center text-2xl font-bold text-white">
           GaduGadu
         </Text>
-        <View className="mb-4 rounded-lg bg-slate-800 p-4">
-          <Text className="text-lg text-white">
+        <View className="mb-4 rounded-lg bg-brand3 p-4">
+          <Text className="text-lg text-brand2">
             Młodzieżowy komunikator wraca do gry!
           </Text>
         </View>
@@ -33,8 +33,8 @@ export default function Root() {
         {step === 1 && <TypingBox />}
 
         {step === 2 && (
-          <View className="mb-4 rounded-lg bg-slate-800 p-4">
-            <Text className="text-lg text-white">
+          <View className="mb-4 rounded-lg bg-brand3 p-4">
+            <Text className="text-lg text-brand2">
               Chcesz utworzyć konto albo zalogować się by dołączyć do nas?
             </Text>
           </View>

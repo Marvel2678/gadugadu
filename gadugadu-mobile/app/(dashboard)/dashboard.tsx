@@ -9,7 +9,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <View className="flex-1 bg-brand4 py-4">
+    <View className="flex-1 bg-brand2 py-4">
       <FlatList
         data={users}
         keyExtractor={(item) => item.id.toString()}

@@ -6,10 +6,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand1: "#F25912",
-        brand2: "#5C3E94",
-        brand3: "#412B6B",
-        brand4: "#211832",
+        brand1: "#E8DC2A",
+        brand2: "#000000",
+        brand3: "#FFFFFF",
+        secondary: "#444444",
+        muted: "#777777",
       },
       animation: {
         typewriter: "typewriter 2s steps(11) forwards",

@@ -9,8 +9,8 @@ export default function DashboardLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: "#F25912",
-          tabBarStyle: { backgroundColor: "#211832" },
+          tabBarActiveTintColor: "#000000",
+          tabBarStyle: { backgroundColor: "#E8DC2A" },
         }}
       >
         <Tabs.Screen name="dashboard" options={{ title: "Home" }} />
