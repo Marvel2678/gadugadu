@@ -1,4 +1,4 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import TypingBox from "../components/TypingBox";
@@ -19,9 +19,9 @@ export default function Root() {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center bg-brand1 px-6">
+    <SafeAreaView className="flex-1 items-center justify-center bg-brand3 px-6">
       <View className="w-full max-w-md rounded-xl bg-brand2 p-6">
-        <Text className="mb-4 text-center text-2xl font-bold text-white">
+        <Text className="mb-4 text-center text-2xl font-bold text-brand1">
           GaduGadu
         </Text>
         <View className="mb-4 rounded-lg bg-brand3 p-4">
@@ -41,13 +41,14 @@ export default function Root() {
         )}
 
         {step === 2 && (
-          <View className="mt-2">
-            <Button
-              title="Dołączam"
-              color="#F25912"
-              onPress={() => router.push("/(auth)/login")}
-            />
-          </View>
+          <TouchableOpacity
+            className="mt-4 bg-[#E8DC2A] rounded-xl py-3"
+            onPress={() => router.push("/(auth)/login")}
+          >
+            <Text className="text-center font-semibold text-black text-lg">
+              Dołączam
+            </Text>
+          </TouchableOpacity>
         )}
       </View>
       <View className="mt-6">

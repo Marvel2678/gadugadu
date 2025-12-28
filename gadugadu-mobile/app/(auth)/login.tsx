@@ -5,16 +5,23 @@ import { socket } from "@/utils/socket";
 
 export default function Login() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [usernameOrEmail, setUsernameOrEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
-    <View className="bg-brand2 flex-1 items-center justify-center p-6">
-      <View className="bg-brand4 w-full max-w-md rounded-lg p-6">
+    <View className="bg-brand3 flex-1 items-center justify-center p-6">
+      <View className="bg-brand2 w-full max-w-md rounded-lg p-6">
         <Text className="mb-4 text-2xl text-white">Login</Text>
         <TextInput
-          value={username}
-          onChangeText={setUsername}
-          placeholder="Username"
+          value={usernameOrEmail}
+          onChangeText={setUsernameOrEmail}
+          placeholder="Email albo nazwa użytkownika"
+          className="mb-3 rounded bg-white p-2"
+        />
+        <TextInput
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Hasło"
           className="mb-3 rounded bg-white p-2"
         />
         <Button

@@ -17,12 +17,19 @@ export const RegisterUser = async (req, res) => {
     });
   }
 
-  const userExists = await db.query("SELECT * FROM users WHERE email = $1", [
-    email,
-  ]);
+  const userExists = await db.query(
+    "SELECT * FROM users WHERE email = $1 OR username = $2",
+    [email, username]
+  );
 
   console.log("count", userExists.rowCount);
   if (userExists.rowCount == 1) {
+    if (userExists.rows[0].username === username) {
+      return res.status(400).json({
+        ok: false,
+        message: "This username already exists! Try another one",
+      });
+    }
     return res.status(400).json({
       ok: false,
       message: "This email already exists! Try another one",
