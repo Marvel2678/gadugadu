@@ -77,14 +77,12 @@ export const getConversationMessages = async (req, res) => {
   }
 };
 
-export const getConversations = async (req, res) => {
+export const getConversations = async (userID) => {
   try {
-    const userId = req.user.id;
-
     const result = await db.query(
       `
       SELECT
-        c.id AS conversation_id,
+        c.id AS converssation_id,
         c.is_group,
         MAX(m.created_at) AS last_message_at,
         MAX(m.text) FILTER (WHERE m.created_at = (
@@ -99,10 +97,12 @@ export const getConversations = async (req, res) => {
       GROUP BY c.id
       ORDER BY last_message_at DESC NULLS LAST
       `,
-      [userId]
+      [userID]
     );
 
-    return res.json({ ok: true, conversations: result.rows });
+    const conversations = result.rows;
+
+    return conversations;
   } catch (err) {
     console.error("GET CONVERSATIONS ERROR:", err);
     return res.status(500).json({ ok: false });

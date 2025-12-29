@@ -11,6 +11,9 @@ const userSocket2 = io("http://localhost:8000", {
   auth: {
     token:
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzY2NDI4MTY3LCJleHAiOjE3NjY1MTQ1Njd9.Owa15uYababiPbEqefrKLDVpCy7Dlz5oVccYXOxof2M",
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
   },
 });
 

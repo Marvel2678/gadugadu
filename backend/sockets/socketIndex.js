@@ -3,6 +3,7 @@ import { registerAuthSocket } from "./auth.socket.js";
 import { registerConversationSocket } from "./conversation.socket.js";
 import { registerMessageSocket } from "./message.socket.js";
 import { db } from "../index.js";
+import { registerReconnect } from "./refresh.socket.js";
 
 export async function initSockets(server) {
   const io = new Server(server, {
@@ -10,10 +11,13 @@ export async function initSockets(server) {
   });
   console.log("🔥 Socket system initialized");
 
-  io.on("connection", async (socket) => {
+  io.on("connect", async (socket) => {
     registerAuthSocket(io, socket);
     registerConversationSocket(io, socket);
     registerMessageSocket(io, socket);
+    registerReconnect(io, socket);
+
+    // socket.emit("user:sync");
     console.log("🟢 ONLINE:", socket.userId);
 
     await db.query("UPDATE users SET online = TRUE WHERE id=$1", [
