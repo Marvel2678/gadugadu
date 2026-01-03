@@ -1,5 +1,7 @@
+import { AppConfig } from "@/utils/appConfig";
+
 export async function getMe(token: string) {
-  const res = await fetch("http://localhost:8000/auth/me", {
+  const res = await fetch(`${AppConfig.SERVER_URL}/auth/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -50,10 +50,10 @@ export const RegisterUser = async (req, res) => {
 };
 
 export const LoginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { usernameOrEmail, password } = req.body;
   console.log("tu");
   const result = await db.query("SELECT * FROM users WHERE email = $1", [
-    email,
+    usernameOrEmail,
   ]);
   const user = result.rows[0];
 
