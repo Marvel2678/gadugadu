@@ -1,19 +1,14 @@
 import { createContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { getMe } from "@/services/auth.service";
-
-type UserType = {
-  id: string;
-  name: string;
-  username: string;
-  email: string;
-  avatar: string;
-};
+import { reconnectSocket, socket } from "@/utils/socket";
+import { tokenStorage } from "@/utils/token.storage";
+import { UserType } from "@/types/UserType";
 
 type AuthContextType = {
   user: UserType | null;
   loading: boolean;
-  login: (token: string) => Promise<void>;
+  login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -29,29 +24,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getter = async () => {
     try {
-      const token = await SecureStore.getItemAsync("token");
-      if (!token) {
-        return;
-      }
-      const me = await getMe(token);
+      const me = await getMe();
+      reconnectSocket();
+      console.log("REFRESHING SOCKET ✅");
       setUser(me);
     } catch (error) {
-      await SecureStore.deleteItemAsync("token");
+      await logout();
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (token: string) => {
-    await SecureStore.setItemAsync("token", token);
+  const login = async (accessToken: string, refreshToken: string) => {
+    try {
+      await tokenStorage.setRefreshToken(refreshToken);
+      await tokenStorage.setAccessToken(accessToken);
 
-    const me = await getMe(token);
+      socket.auth = { token: await tokenStorage.getAccessToken() };
+      socket.connect();
 
-    setUser(me);
+      const me = await getMe();
+
+      setUser(me);
+    } catch (error) {
+      console.log("CONTEXT LOGIN ERROR:", error);
+    }
   };
 
   const logout = async () => {
-    await SecureStore.deleteItemAsync("token");
+    // const
+    socket.disconnect();
+    await tokenStorage.clear();
     setUser(null);
   };
 

@@ -1,12 +1,8 @@
 import { AppConfig } from "@/utils/appConfig";
+import { apiMiddleware } from "@/utils/middleware";
 
-export async function getMe(token: string) {
-  const res = await fetch(`${AppConfig.SERVER_URL}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!res.ok) throw new Error("Unauthorized");
-  return res.json();
+export async function getMe() {
+  const res = await apiMiddleware.get("/auth/me");
+  if (!res.data.ok) throw new Error("Unauthorized");
+  return res.data;
 }

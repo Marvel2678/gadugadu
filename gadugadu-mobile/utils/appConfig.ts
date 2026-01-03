@@ -1,4 +1,4 @@
 export const AppConfig = {
-  // SERVER_URL: "http://192.168.0.25:8000",
-  SERVER_URL: "http://192.168.0.30:8000",
+  SERVER_URL: process.env.EXPO_PUBLIC_SERVER_URL || "http://localhost:8000",
+  SOCKET_URL: process.env.EXPO_PUBLIC_SOCKET_URL || "http://localhost:8000",
 };

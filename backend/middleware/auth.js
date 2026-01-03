@@ -19,6 +19,6 @@ export function auth(req, res, next) {
     next();
   } catch {
     res.status(401).json({ error: "Invalid token" });
-    console.error(token);
+    console.error("ERROR TOKEN: " + token);
   }
 }

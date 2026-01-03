@@ -51,7 +51,6 @@ export const RegisterUser = async (req, res) => {
 
 export const LoginUser = async (req, res) => {
   const { usernameOrEmail, password } = req.body;
-  console.log("tu");
   const result = await db.query("SELECT * FROM users WHERE email = $1", [
     usernameOrEmail,
   ]);
@@ -77,8 +76,6 @@ export const LoginUser = async (req, res) => {
 
   const userTEST = await db.query("SELECT * FROM users WHERE id=$1", [user.id]);
 
-  console.log(userTEST.rows[0]);
-
   res.json({ ok: true, accessToken, refreshToken });
 };
 
@@ -88,40 +85,43 @@ export const GetUser = async (req, res) => {
     [req.user.id]
   );
 
-  res.json(user.rows[0]);
+  res.json({ ok: true, user: user.rows[0] });
 };
 
 export const RefreshToken = async (req, res) => {
   const incomingRefreshToken = req.body.refreshToken;
+  try {
+    if (!incomingRefreshToken) {
+      return res.status(401).json({ ok: false, message: "No refreshToken" });
+    }
 
-  if (!incomingRefreshToken) {
-    return res.json({ ok: false, message: "No refreshToken" });
-  }
+    const decodedToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.JWT_SECRET_REFRESH_TOKEN
+    );
 
-  const decodedToken = jwt.verify(
-    incomingRefreshToken,
-    process.env.JWT_SECRET_REFRESH_TOKEN
-  );
+    const userQuery = await db.query(
+      "SELECT refreshToken from users WHERE id=$1",
+      [decodedToken.id]
+    );
 
-  const userQuery = await db.query(
-    "SELECT refreshToken from users WHERE id=$1",
-    [decodedToken.id]
-  );
+    if (userQuery.rowCount == 0) {
+      return res.status(401).json({ ok: false, message: "Invalid token" });
+    }
+    if (incomingRefreshToken !== userQuery.rows[0].refreshtoken) {
+      return res
+        .status(403)
+        .json({ ok: false, message: "Refresh token is expired" });
+    }
 
-  if (userQuery.rowCount == 0) {
-    return res.json({ ok: false, message: "Invalid token" });
-  }
-  if (incomingRefreshToken !== userQuery.rows[0].refreshtoken) {
+    const accessToken = await createAccessToken(decodedToken.id);
+    console.log("REFRESHED TOKEN");
+    return res.status(200).json({ ok: true, accessToken: accessToken });
+  } catch (error) {
     return res
       .status(403)
-      .json({ ok: false, message: "Refresh token is expired" });
+      .json({ ok: false, message: "Could not refresh token" });
   }
-
-  console.log(decodedToken.id);
-
-  const accessToken = await createAccessToken(decodedToken.id);
-
-  return res.status(200).json({ ok: true, accessToken: accessToken });
 };
 
 export const userLogout = async (req, res) => {
@@ -147,6 +147,5 @@ export const userLogout = async (req, res) => {
 
   const userTEST = await db.query("SELECT * FROM users WHERE id=$1", [user_id]);
 
-  console.log(userTEST.rows[0]);
   return res.json({ ok: true, message: "Logged out" });
 };

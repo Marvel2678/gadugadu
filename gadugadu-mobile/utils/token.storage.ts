@@ -1,12 +1,9 @@
 import * as SecureStore from "expo-secure-store";
 
 export const tokenStorage = {
-  getAccessToken: () => {
-    SecureStore.getItemAsync("accessToken");
-  },
-  setAccessToken: (accessToken: string) => {
-    SecureStore.setItemAsync("accessToken", accessToken);
-  },
+  getAccessToken: () => SecureStore.getItemAsync("accessToken"),
+  setAccessToken: (token: string) =>
+    SecureStore.setItemAsync("accessToken", token),
   getRefreshToken: () => SecureStore.getItemAsync("refreshToken"),
   setRefreshToken: (token: string) =>
     SecureStore.setItemAsync("refreshToken", token),

@@ -7,7 +7,7 @@ const config = loadConfig(env);
 
 export const createAccessToken = async (id) => {
   const token = jwt.sign({ id }, config.JWT_SECRET_ACCESS_TOKEN, {
-    expiresIn: "1d",
+    expiresIn: "1m",
   });
   return token;
 };

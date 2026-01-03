@@ -4,6 +4,8 @@ import { useContext, useState } from "react";
 import { EmailValidator, PasswordValidator } from "@/utils/validators";
 import { AppConfig } from "@/utils/appConfig";
 import { AuthContext } from "@/context/userContext";
+import axios from "axios";
+import { apiMiddleware } from "@/utils/middleware";
 
 export default function Register() {
   const router = useRouter();
@@ -31,22 +33,20 @@ export default function Register() {
         return setErr(PasswordValidation);
       }
 
-      const res = await fetch(AppConfig.SERVER_URL + "/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const res = await apiMiddleware.post(
+        "/auth/register",
+        {
           name,
           username,
           email,
           password,
-        }),
-      });
+        },
+        { headers: { skipAuth: true } }
+      );
 
-      const data = await res.json();
+      const data = await res.data;
 
-      if (!res.ok) {
+      if (!data.ok) {
         return setErr(data.message || "Błąd rejestracji");
       }
 

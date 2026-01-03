@@ -7,17 +7,6 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AuthProvider } from "@/context/userContext";
 
 export default function RootLayout() {
-  useEffect(() => {
-    socket.connect();
-
-    socket.on("connect", () => {
-      console.log("✅ connected", socket.id);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
   return (
     <SafeAreaProvider>
       <AuthProvider>

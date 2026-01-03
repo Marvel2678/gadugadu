@@ -5,6 +5,7 @@ import { socket } from "@/utils/socket";
 import { AppConfig } from "@/utils/appConfig";
 import { AuthContext } from "@/context/userContext";
 import axios from "axios";
+import { apiMiddleware } from "@/utils/middleware";
 
 export default function Login() {
   const router = useRouter();
@@ -20,20 +21,22 @@ export default function Login() {
         return setErr("Nie wszystko jest wypełnione");
       }
 
-      const res = await axios.post(AppConfig.SERVER_URL + "/auth/login", {
-        usernameOrEmail,
-        password,
-      });
+      const res = await apiMiddleware.post(
+        "/auth/login",
+        {
+          usernameOrEmail,
+          password,
+        },
+        { headers: { skipAuth: true } }
+      );
 
-      console.log(res);
+      const data = res.data;
 
-      if (!res.ok) {
-        return setErr(res.message || "Błąd rejestracji");
+      if (!data.ok) {
+        return setErr(data.message || "Błąd logowania");
       }
 
-      login(res.accessToken);
-
-      router.replace("/(dashboard)/dashboard");
+      login(data.accessToken, data.refreshToken);
     } catch (err) {
       setErr("Brak połączenia z serwerem");
       console.log(err);
