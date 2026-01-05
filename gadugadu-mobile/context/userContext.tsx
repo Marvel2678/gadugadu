@@ -1,9 +1,10 @@
 import { createContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { getMe } from "@/services/auth.service";
-import { reconnectSocket, socket } from "@/utils/socket";
+import { reconnectAndSyncSocket, socket } from "@/utils/socket";
 import { tokenStorage } from "@/utils/token.storage";
 import { UserType } from "@/types/UserType";
+import { apiMiddleware } from "@/utils/middleware";
 
 type AuthContextType = {
   user: UserType | null;
@@ -16,7 +17,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     getter();
@@ -24,11 +25,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getter = async () => {
     try {
+      setLoading(true);
       const me = await getMe();
-      reconnectSocket();
+      reconnectAndSyncSocket();
       console.log("REFRESHING SOCKET ✅");
-      setUser(me);
+      setUser(me.user);
+      setLoading(false);
     } catch (error) {
+      setUser(null);
+      console.log("GETTER ERROR:", error);
       await logout();
     } finally {
       setLoading(false);
@@ -37,25 +42,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (accessToken: string, refreshToken: string) => {
     try {
+      setLoading(true);
       await tokenStorage.setRefreshToken(refreshToken);
       await tokenStorage.setAccessToken(accessToken);
 
       socket.auth = { token: await tokenStorage.getAccessToken() };
       socket.connect();
-
       const me = await getMe();
 
+      socket.user_id = me.user.id;
+      console.log(socket.user_id);
       setUser(me);
     } catch (error) {
       console.log("CONTEXT LOGIN ERROR:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = async () => {
-    // const
-    socket.disconnect();
-    await tokenStorage.clear();
-    setUser(null);
+    try {
+      setLoading(true);
+      socket.disconnect();
+      const res = await apiMiddleware.post("/auth/logout", {});
+      if (res.status === 200) {
+        console.log("LOGOUT SUCCESS:", res.data);
+      }
+      await tokenStorage.clear();
+      setUser(null);
+    } catch (error) {
+      console.log("LOGOUT ERROR:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

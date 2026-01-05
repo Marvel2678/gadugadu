@@ -24,14 +24,14 @@ export default function Login() {
       const res = await apiMiddleware.post(
         "/auth/login",
         {
-          usernameOrEmail,
+          email: usernameOrEmail,
           password,
         },
         { headers: { skipAuth: true } }
       );
 
       const data = res.data;
-
+      console.log(data);
       if (!data.ok) {
         return setErr(data.message || "Błąd logowania");
       }
@@ -40,6 +40,7 @@ export default function Login() {
     } catch (err) {
       setErr("Brak połączenia z serwerem");
       console.log(err);
+      console.log(err.response.message);
     }
   };
   return (

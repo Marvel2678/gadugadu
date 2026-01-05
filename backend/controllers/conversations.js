@@ -1,5 +1,8 @@
 import { db } from "../index.js";
-import { getUserConversations } from "../services/conversation.service.js";
+import {
+  getOtherUsers,
+  getUserConversations,
+} from "../services/conversation.service.js";
 import { getMessagesFromPrivateConversations } from "./messages.js";
 
 export const createConversation = async (req, res) => {
@@ -82,6 +85,16 @@ export const getConversations = async (req, res) => {
   const userID = req.user.id;
   try {
     const conversations = await getUserConversations(userID);
+    for (const conversation of conversations) {
+      const otherUsers = await getOtherUsers(
+        conversation.conversation_id,
+        userID
+      );
+      conversation.other_users = otherUsers;
+    }
+    for (const conversation of conversations) {
+      console.log(conversation.other_users);
+    }
     return res.json({ ok: true, conversations });
   } catch (error) {
     console.error("GET CONVERSATIONS ERROR:", error);

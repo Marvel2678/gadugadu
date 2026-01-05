@@ -1,4 +1,4 @@
-import DashboardNavbar from "@/components/elements/DashboardNavbar";
+import DashboardNavbar from "@/components/elements/navbars/DashboardNavbar";
 import { useAuth } from "@/hooks/useAuth";
 import { Redirect, Tabs } from "expo-router";
 import { Text } from "react-native";
@@ -15,7 +15,8 @@ export default function DashboardLayout() {
     );
   }
   if (user === null) {
-    return <Redirect href="/(auth)/login" />;
+    console.log("REDIRECT V222");
+    return <Redirect href="/(auth)/login" withAnchor={true} />;
   }
 
   return (

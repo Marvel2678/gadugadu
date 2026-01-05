@@ -14,7 +14,7 @@ export default function AuthLayout() {
     );
   }
   if (user !== null) {
-    return <Redirect href="/(dashboard)/dashboard" />;
+    return <Redirect href="/(dashboard)/dashboard" withAnchor={true} />;
   }
 
   return (

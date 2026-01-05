@@ -7,7 +7,7 @@ export async function registerConversationSocket(io, socket) {
 
       await db.query(
         "UPDATE messages SET delivered=TRUE WHERE sender_id != $1 AND conversation_id = $2 AND delivered = FAlSE",
-        [socket.userId, conversation_id]
+        [socket.user_id, conversation_id]
       );
 
       io.to(`conversation:${conversation_id}`).emit("message:delivered", {
@@ -22,12 +22,12 @@ export async function registerConversationSocket(io, socket) {
   socket.on("typing:start", ({ conversation_id }) => {
     socket
       .to(`conversation:${conversation_id}`)
-      .emit("typing:start", { userId: socket.userId });
+      .emit("typing:start", { user_id: socket.user_id });
   });
 
   socket.on("typing:stop", ({ conversation_id }) => {
     socket
       .to(`conversation:${conversation_id}`)
-      .emit("typing:stop", { userId: socket.userId });
+      .emit("typing:stop", { user_id: socket.user_id });
   });
 }

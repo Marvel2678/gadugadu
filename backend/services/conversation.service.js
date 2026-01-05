@@ -31,3 +31,25 @@ export const getUserConversations = async (userID) => {
     return res.status(500).json({ ok: false });
   }
 };
+
+export const getOtherUsers = async (conversation_id, my_user_id) => {
+  try {
+    const result = await db.query(
+      `
+      SELECT 
+      u.username,
+      u.online,
+      u.avatar_url
+      FROM users u
+      JOIN conversation_members cm ON u.id = cm.user_id
+      WHERE cm.conversation_id = $1 AND cm.user_id != $2;
+      `,
+      [conversation_id, my_user_id]
+    );
+    console.log(result.rows);
+    return result.rows;
+  } catch (err) {
+    console.error("GET OTHER USERS ERROR:", err);
+    return [];
+  }
+};

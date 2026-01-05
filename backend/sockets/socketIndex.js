@@ -18,25 +18,27 @@ export async function initSockets(server) {
     registerReconnect(io, socket);
 
     // socket.emit("user:sync");
-    console.log("🟢 ONLINE:", socket.userId);
-
+    console.log("🟢 ONLINE:", socket.user_id);
+    //TODO
+    // Make time stamp for last online
+    // Make automatically set offline after no connection for X minutes
     await db.query("UPDATE users SET online = TRUE WHERE id=$1", [
-      socket.userId,
+      socket.user_id,
     ]);
 
     io.emit("user:online", {
-      userId: socket.userId,
+      user_id: socket.user_id,
     });
 
     socket.on("disconnect", async () => {
-      console.log("🔴 OFFLINE:", socket.userId);
+      console.log("🔴 OFFLINE:", socket.user_id);
 
       await db.query("UPDATE users SET online = FALSE WHERE id=$1", [
-        socket.userId,
+        socket.user_id,
       ]);
 
       io.emit("user:offline", {
-        userId: socket.userId,
+        user_id: socket.user_id,
       });
     });
   });

@@ -50,33 +50,41 @@ export const RegisterUser = async (req, res) => {
 };
 
 export const LoginUser = async (req, res) => {
-  const { usernameOrEmail, password } = req.body;
-  const result = await db.query("SELECT * FROM users WHERE email = $1", [
-    usernameOrEmail,
-  ]);
-  const user = result.rows[0];
+  const { email: usernameOrEmail, password } = req.body;
 
-  if (!user || user === undefined)
-    return res.status(401).json({ ok: false, message: "Invalid email" });
+  try {
+    const result = await db.query("SELECT * FROM users WHERE email = $1", [
+      usernameOrEmail,
+    ]);
+    const user = result.rows[0];
 
-  const valid = await bcrypt.compare(password, user.password);
+    if (!user || user === undefined)
+      return res.status(401).json({ ok: false, message: "Invalid email" });
 
-  if (!valid)
-    return res
-      .status(401)
-      .json({ ok: false, message: "Incorrect email or password" });
+    const valid = await bcrypt.compare(password, user.password);
 
-  const accessToken = await createAccessToken(user.id);
-  const refreshToken = await createRefreshToken(user.id);
+    if (!valid)
+      return res
+        .status(401)
+        .json({ ok: false, message: "Incorrect email or password" });
 
-  await db.query("UPDATE users SET refreshToken = $1 WHERE id=$2", [
-    refreshToken,
-    user.id,
-  ]);
+    const accessToken = await createAccessToken(user.id);
+    const refreshToken = await createRefreshToken(user.id);
 
-  const userTEST = await db.query("SELECT * FROM users WHERE id=$1", [user.id]);
+    await db.query("UPDATE users SET refreshToken = $1 WHERE id=$2", [
+      refreshToken,
+      user.id,
+    ]);
 
-  res.json({ ok: true, accessToken, refreshToken });
+    const userTEST = await db.query("SELECT * FROM users WHERE id=$1", [
+      user.id,
+    ]);
+
+    res.json({ ok: true, accessToken, refreshToken });
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+    return res.status(500).json({ ok: false, message: "Server error" });
+  }
 };
 
 export const GetUser = async (req, res) => {

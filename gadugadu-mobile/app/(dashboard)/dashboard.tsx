@@ -14,6 +14,41 @@ export default function Dashboard() {
   const [chats, setChats] = useState<ChatType[]>([]);
   useEffect(() => {
     getChats();
+    const handleOnline = (user_id) => {
+      setChats((prevChats) =>
+        prevChats.map((chat) => ({
+          ...chat,
+          other_users: chat.other_users.map((user) =>
+            user.user_id === user_id ? { ...user, online: true } : user
+          ),
+        }))
+      );
+      console.log("STATUS UPDATE ONLINE:", user_id);
+    };
+
+    const handleOffline = (user_id) => {
+      console.log("STATUS UPDATE OFFLINE:", user_id);
+
+      setChats((prevChats) =>
+        prevChats.map((chat) => ({
+          ...chat,
+          other_users: chat.other_users.map((user) =>
+            user.user_id === user_id ? { ...user, online: true } : user
+          ),
+        }))
+      );
+    };
+
+    socket.on("user:online", (data) => {
+      console.log("USER_ID", data.user_id);
+      handleOnline(data.user_id);
+    });
+    socket.on("user:offline", (data) => handleOffline(data.user_id));
+
+    return () => {
+      socket.off("user:online", (data) => handleOnline(data.user_id));
+      socket.off("user:offline", (data) => handleOffline(data.user_id));
+    };
   }, []);
 
   const getChats = async () => {
@@ -24,9 +59,6 @@ export default function Dashboard() {
       const data = res.data;
       console.log("CHATS:", data);
       setChats(data.conversations);
-      socket.emit("user:sync", (data) => {
-        console.log("USER SYNC EVENT:", data);
-      });
     } catch (error) {
       console.log(error);
       console.log("Błąd podczas pobierania czatów");
@@ -57,12 +89,6 @@ export default function Dashboard() {
   return (
     <View className="flex-1 bg-brand3 py-4">
       <Text className="text-brand3 text-xl p-4 my-10">USER: {user.name}</Text>
-      <Text className="text-brand3 text-xl p-4 my-10">
-        LOOOOOOOOOOOOOOOOOOOOOL
-      </Text>
-      <Text className="text-brand3 text-xl p-4 my-10">
-        LOOOOOOOOOOOOOOOOOOOOOL
-      </Text>
       <FlatList
         data={chats}
         keyExtractor={(item) => item.conversation_id.toString()}

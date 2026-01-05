@@ -3,11 +3,11 @@ import { getUserConversations } from "../services/conversation.service.js";
 
 export function registerReconnect(io, socket) {
   socket.on("user:sync", async () => {
-    const conversations = await getUserConversations(socket.userId);
+    const conversations = await getUserConversations(socket.user_id);
 
     conversations.forEach((c) => {
       socket.join(`conversation:${c.id}`);
     });
-    console.log("🔁 Synced conversations for user", socket.userId);
+    console.log("🔁 Synced conversations for user", socket.user_id);
   });
 }

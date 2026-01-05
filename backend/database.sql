@@ -7,7 +7,10 @@ CREATE TABLE users (
     avatar_url TEXT,
     online BOOLEAN DEFAULT FALSE,
     refreshToken TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
+    is_deleted BOOLEAN DEFAULT FALSE,
+    is_disabled BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
 );
 
 CREATE TABLE conversations (

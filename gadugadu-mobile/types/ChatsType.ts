@@ -3,4 +3,9 @@ export type ChatType = {
   is_group: boolean;
   lastMessage: string;
   lastMessageAt: string;
+  other_users: {
+    user_id: number;
+    username: string;
+    online: boolean;
+  }[];
 };

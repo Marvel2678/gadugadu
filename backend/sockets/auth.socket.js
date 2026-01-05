@@ -13,7 +13,7 @@ export function registerAuthSocket(io, socket) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS_TOKEN);
 
     const user_id = decoded.id;
-    socket.userId = decoded.id;
+    socket.user_id = decoded.id;
 
     console.log("USER_ID ", user_id);
   } catch (error) {

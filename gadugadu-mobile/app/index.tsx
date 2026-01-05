@@ -1,15 +1,18 @@
 import { View, Text, Button, TouchableOpacity } from "react-native";
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import TypingBox from "../components/TypingBox";
+import TypingBox from "@/components/TypingBox";
 import { SafeAreaView } from "react-native-safe-area-context";
-import "../global.css";
+import "@/global.css";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Root() {
   const router = useRouter();
   const [step, setStep] = useState(0); // 0 intro, 1 typing, 2 question
+  const { user, loading } = useAuth();
 
   useEffect(() => {
+    // if (!user || loading) return;
     const t1 = setTimeout(() => setStep(1), 3000);
     const t2 = setTimeout(() => setStep(2), 6500);
     return () => {
@@ -17,6 +20,13 @@ export default function Root() {
       clearTimeout(t2);
     };
   }, []);
+  if (loading) {
+    return null;
+  }
+
+  if (user) {
+    return <Redirect href="/(dashboard)/dashboard" withAnchor={true} />;
+  }
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-brand3 px-6">

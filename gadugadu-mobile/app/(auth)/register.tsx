@@ -27,11 +27,11 @@ export default function Register() {
         return setErr(EmailValidation);
       }
 
-      const PasswordValidation = PasswordValidator(password);
+      // const PasswordValidation = PasswordValidator(password);
 
-      if (PasswordValidation !== null) {
-        return setErr(PasswordValidation);
-      }
+      // if (PasswordValidation !== null) {
+      //   return setErr(PasswordValidation);
+      // }
 
       const res = await apiMiddleware.post(
         "/auth/register",
