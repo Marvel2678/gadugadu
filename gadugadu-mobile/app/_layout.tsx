@@ -6,13 +6,16 @@ import { StatusBar } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AuthProvider } from "@/context/userContext";
 import { useAuth } from "@/hooks/useAuth";
+import { ChatProvider } from "@/context/chatContext";
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <StatusBar barStyle="dark-content" />
-        <Stack screenOptions={{ headerShown: false }} />
+        <ChatProvider>
+          <StatusBar barStyle="dark-content" />
+          <Stack screenOptions={{ headerShown: false }} />
+        </ChatProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );

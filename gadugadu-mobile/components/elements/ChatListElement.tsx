@@ -7,7 +7,7 @@ export default function ChatListElement({ chat }: { chat: ChatType }) {
   const user = chat.other_users[0]; // Assuming one-on-one chat for simplicity
   const handlePress = () => {
     router.push({
-      pathname: "/(dashboard)/chat/[id]",
+      pathname: "/(chats)/[id]",
       params: { id: String(chat.conversation_id) },
     });
   };

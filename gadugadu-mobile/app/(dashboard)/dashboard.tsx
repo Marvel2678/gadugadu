@@ -1,5 +1,6 @@
 import ChatListElement from "@/components/elements/ChatListElement";
 import { useAuth } from "@/hooks/useAuth";
+import { useChats } from "@/hooks/useChats";
 import { ChatType } from "@/types/ChatsType";
 import { AppConfig } from "@/utils/appConfig";
 import { apiMiddleware } from "@/utils/middleware";
@@ -11,7 +12,7 @@ import { View, Text, FlatList } from "react-native";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [chats, setChats] = useState<ChatType[]>([]);
+  const { chats, setChats } = useChats();
   useEffect(() => {
     getChats();
     const handleOnline = (user_id) => {
@@ -33,7 +34,7 @@ export default function Dashboard() {
         prevChats.map((chat) => ({
           ...chat,
           other_users: chat.other_users.map((user) =>
-            user.user_id === user_id ? { ...user, online: true } : user
+            user.user_id === user_id ? { ...user, online: false } : user
           ),
         }))
       );
