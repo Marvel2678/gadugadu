@@ -1,12 +1,14 @@
-import ChatNavbar from "@/components/elements/navbars/ChatNavbar";
-import React from "react";
 import { Text, View } from "react-native";
 
-export default function Chat() {
+const Chat = () => {
   return (
-    <View>
-      <ChatNavbar />
+    <View className="flex-1 bg-red-400 w-full h-full">
+      <Text>Chat Screen</Text>
+      <Text>Chat Screen</Text>
+      <Text>Chat Screen</Text>
       <Text>Chat Screen</Text>
     </View>
   );
-}
+};
+
+export default Chat;
