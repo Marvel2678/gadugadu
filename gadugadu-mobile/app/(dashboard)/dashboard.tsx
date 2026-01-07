@@ -82,14 +82,14 @@ export default function Dashboard() {
   if (loading) {
     return (
       <View className="flex-1 bg-brand3 items-center justify-center">
-        <Text className="text-white text-xl">Ładowanie...</Text>
+        <Text className="text-black text-xl">Ładowanie...</Text>
       </View>
     );
   }
 
   return (
     <View className="flex-1 bg-brand3 py-4">
-      <Text className="text-brand3 text-xl p-4 my-10">USER: {user.name}</Text>
+      <Text className="text-black text-xl p-4">USER: {user.name}</Text>
       <FlatList
         data={chats}
         keyExtractor={(item) => item.conversation_id.toString()}

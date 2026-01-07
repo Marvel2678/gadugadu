@@ -15,7 +15,6 @@ export default function DashboardLayout() {
     );
   }
   if (user === null) {
-    console.log("REDIRECT V222");
     return <Redirect href="/(auth)/login" withAnchor={true} />;
   }
 

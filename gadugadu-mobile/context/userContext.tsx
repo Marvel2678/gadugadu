@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const me = await getMe();
 
       socket.user_id = me.user.id;
-      console.log(socket.user_id);
+      console.log("SOCKET CONNECTED ✅");
       setUser(me);
     } catch (error) {
       console.log("CONTEXT LOGIN ERROR:", error);

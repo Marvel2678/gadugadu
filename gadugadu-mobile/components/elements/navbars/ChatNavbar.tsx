@@ -4,7 +4,7 @@ import { UserType } from "@/types/UserType";
 import { useChats } from "@/hooks/useChats";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import defaultProfileImage from "@/assets/images/default_profile_image.jpg";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import { FontAwesome } from "@react-native-vector-icons/fontawesome";
 
 export default function ChatNavbar() {
   const router = useRouter();
@@ -18,14 +18,26 @@ export default function ChatNavbar() {
   };
   return (
     <View>
-      <View className="w-full bg-brand2 p-9 flex items-center justify-between flex-row">
+      <View className="w-full bg-brand2 px-4 py-3 flex items-center justify-between flex-row">
         <View className="flex flex-row flex-1 items-center">
           <TouchableOpacity onPress={handleBackToChat}>
-            <Icon name="arrow-left" size={24} color="white" />
+            <FontAwesome name="arrow-left" size={20} color="#E8DC2A" />
           </TouchableOpacity>
-          <Text className="text-white text-xl font-bold ml-4">
-            {user.username}
-          </Text>
+          <View className="ml-4">
+            <Text className="text-gray-200 text-lg font-semibold">
+              {user.username}
+            </Text>
+            <View className="flex flex-row items-center mt-1">
+              <View
+                className={`${user.online ? "bg-green-500" : "bg-gray-500"} w-2 h-2 rounded-full mr-2 `}
+              ></View>
+              <Text
+                className={`${user.online ? "text-green-500" : "text-gray-500"} text-xs`}
+              >
+                {user.online ? "Aktywny" : "Nieaktywny"}
+              </Text>
+            </View>
+          </View>
         </View>
         <View>
           <Image
