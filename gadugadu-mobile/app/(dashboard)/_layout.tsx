@@ -10,7 +10,7 @@ export default function DashboardLayout() {
   if (loading) {
     return (
       <SafeAreaView className="flex-1 bg-brand3 items-center justify-center">
-        <Text className="text-white text-xl">Ładowanie...</Text>
+        <Text className="text-black text-xl">Ładowanie...</Text>
       </SafeAreaView>
     );
   }

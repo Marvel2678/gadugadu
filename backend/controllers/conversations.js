@@ -3,7 +3,6 @@ import {
   getOtherUsers,
   getUserConversations,
 } from "../services/conversation.service.js";
-import { getMessagesFromPrivateConversations } from "./messages.js";
 
 export const createConversation = async (req, res) => {
   try {

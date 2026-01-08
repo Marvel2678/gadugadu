@@ -19,6 +19,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/auth", userRouter);
 app.use("/conversation", conversationRouter);
+app.use("/message", messageRouter);
 
 const io = initSockets(server);
 

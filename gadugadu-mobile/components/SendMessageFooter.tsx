@@ -9,19 +9,19 @@ import React from "react";
 import { FontAwesome } from "@react-native-vector-icons/fontawesome";
 
 const SendMessageFooter = () => {
-  const handleSendMessage = async () => {
-    // Logic to send message
-    console.log("Send Message");
-  };
   return (
-    <View className="w-full flex-row items-center bg-brand3 px-3 py-2">
-      <TextInput
-        className="flex-1 h-full bg-brand2 rounded-lg px-4 py-2 placeholder:text-white mr-2"
-        placeholder="Type a message..."
-      />
-      <TouchableOpacity className="px-3 py-2 " onPress={handleSendMessage}>
-        <FontAwesome name="send" size={20} color="black" />
-      </TouchableOpacity>
+    <View className="w-full bg-brand3 px-3 py-2 border-t border-black/10">
+      <View className="flex-row items-center bg-brand2 rounded-2xl px-3 py-2">
+        <TextInput
+          className="flex-1 text-black text-base"
+          placeholder="Type a message..."
+          placeholderTextColor="#555"
+        />
+
+        <TouchableOpacity className="ml-2 bg-brand1 p-2 rounded-full">
+          <FontAwesome name="send" size={16} color="black" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

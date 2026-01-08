@@ -1,21 +1,36 @@
 import MessageBox from "@/components/MessageBox";
 import { useAuth } from "@/hooks/useAuth";
-import { Text, View } from "react-native";
+import { MessageType } from "@/types/MessageType";
+import { apiMiddleware } from "@/utils/middleware";
+import { useEffect, useRef, useState } from "react";
+import { Text, View, ScrollView, FlatList } from "react-native";
 
 const Chat = () => {
-  const { user } = useAuth();
+  const listRef = useRef<FlatList>(null);
+  const messages = useState<MessageType[]>([]);
 
-  const messages = [
-    { id: 1, sender_id: 1, text: "Hello!" },
-    { id: 2, sender_id: 2, text: "Hi there!" },
-    { id: 3, sender_id: 1, text: "How are you?" },
-  ];
+  
+  useEffect(() => {
+
+    listRef.current?.scrollToEnd({ animated: true });
+  }, [messages]);
+
+
+  const getMessages = async () => {
+    try {
+      const res = await apiMiddleware.get()
 
   return (
-    <View className="flex flex-1 bg-red-400">
-      {messages.map((message) => (
-        <MessageBox key={message.id} message={message} />
-      ))}
+    <View className="flex-1 bg-white">
+      <FlatList
+        className="flex-1 m-4"
+        showsVerticalScrollIndicator={false}
+        inverted
+        ref={listRef}
+        data={[...messages].reverse()}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <MessageBox key={item.id} message={item} />}
+      ></FlatList>
     </View>
   );
 };
