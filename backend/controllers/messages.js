@@ -29,9 +29,9 @@ export const createMessage = async (req, res) => {
       text
     );
 
-    return res
-      .status(201)
-      .json({ message: { id: message_id, sender_id, type, text } });
+    return res.status(201).json({
+      message: { id: message_id, conversation_id, sender_id, type, text },
+    });
   } catch (error) {
     console.error("CREATE MESSAGE ERROR:", error);
     return res

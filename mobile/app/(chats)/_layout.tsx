@@ -27,7 +27,6 @@ const ChatsLayout = () => {
       <View className="flex-1">
         <Slot />
       </View>
-      <SendMessageFooter />
     </SafeAreaView>
   );
 };

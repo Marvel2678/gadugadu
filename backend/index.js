@@ -7,6 +7,7 @@ import { loadConfig } from "./config/serverConfiguration.js";
 import conversationRouter from "./routes/conversationRouter.js";
 import http from "http";
 import { initSockets } from "./sockets/socketIndex.js";
+import messageRouter from "./routes/messageRouter.js";
 
 const env = await SetupForServer();
 
