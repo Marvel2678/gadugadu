@@ -10,7 +10,7 @@ CREATE TABLE users (
     is_deleted BOOLEAN DEFAULT FALSE,
     is_disabled BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE conversations (

@@ -8,7 +8,6 @@ import { socket } from "@/utils/socket";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Text, View, ScrollView, FlatList } from "react-native";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const Chat = () => {
   const { id: conversation_id } = useLocalSearchParams();
@@ -27,21 +26,32 @@ const Chat = () => {
     listRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
   useEffect(() => {
-    const handleNewMessage = ({ message, temp_id }: any) => {
-      setMessages((prev) => prev.map((m) => (m.id === temp_id ? message : m)));
-    };
-
-    socket.on("message:new", ({ message, temp_id }) =>
-      handleNewMessage({ message, temp_id })
-    );
+    socket.on("message:new", ({ message, temp_id }) => {
+      console.log("JEST TUTAJ");
+      handleNewMessage({ message, temp_id });
+    });
 
     return () => {
       socket.off("message:new", handleNewMessage);
     };
   }, []);
 
+  const handleNewMessage = ({ message, temp_id }: any) => {
+    setMessages((prev) => {
+      console.log("TEMP", temp_id);
+      console.log("MESSAGE", message);
+      const exists = prev.some((m) => m.id.toString() === temp_id); // checking is element exists in table
+
+      if (exists) {
+        return prev.map((m) => (m.id === temp_id ? message : m));
+      }
+
+      return [...prev, message];
+    });
+  };
+
   const handleSend = async (text: string) => {
-    const temp_id = `temp_${Date.now()}`;
+    const temp_id = `temp_${Date.now()}`.toString();
     try {
       console.log("CONVERSATION_ID", conversation_id);
       socket.emit("message:send", {

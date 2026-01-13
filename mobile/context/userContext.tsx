@@ -26,10 +26,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const getter = async () => {
     try {
       setLoading(true);
-      const me = await getMe();
+      const res = await getMe();
       reconnectAndSyncSocket();
       console.log("REFRESHING SOCKET ✅");
-      setUser(me.user);
+      const me = res.user;
+      setUser(me);
       setLoading(false);
     } catch (error) {
       setUser(null);
@@ -48,9 +49,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       socket.auth = { token: await tokenStorage.getAccessToken() };
       socket.connect();
-      const me = await getMe();
+      const res = await getMe();
 
-      socket.user_id = me.user.id;
+      const me = res.data.user;
+      socket.user_id = me.id;
       console.log("SOCKET CONNECTED ✅");
       setUser(me);
     } catch (error) {

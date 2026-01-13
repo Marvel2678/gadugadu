@@ -66,11 +66,6 @@ export default function Dashboard() {
       // console.log(error.response?.data);
     }
   };
-  // const users = [
-  //   { id: 1, name: "user1", active: true },
-  //   { id: 2, name: "user2", active: true },
-  //   { id: 3, name: "user3", active: false },
-  // ];
 
   const { user, loading } = useAuth();
 

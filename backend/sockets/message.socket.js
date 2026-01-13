@@ -13,18 +13,23 @@ export function registerMessageSocket(io, socket) {
         );
 
         if (!isMember.rowCount) return;
-        const message = await createMessageFunc(
+        const { message_id } = await createMessageFunc(
           conversation_id,
           socket.user_id,
           type,
           text
         );
-
-        io.to(`conversation:${conversation_id}`).emit(
-          "message:new",
-          message,
-          temp_id
-        );
+        const message = {
+          id: message_id || temp_id,
+          conversation_id: conversation_id,
+          sender_id: socket.user_id,
+          type,
+          text,
+        };
+        io.to(`conversation:${conversation_id}`).emit("message:new", {
+          message: message,
+          temp_id: temp_id,
+        });
         console.log("JEST OK✅");
       } catch (error) {
         // socket.emit("message:error", {
