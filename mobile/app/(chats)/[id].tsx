@@ -14,13 +14,18 @@ const Chat = () => {
   const listRef = useRef<FlatList>(null);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const { user } = useAuth();
+
   useEffect(() => {
-    socket.emit("conversation:join", conversation_id);
-    console.log("JOINED✅");
-    getMessages();
-    return () => {
-      socket.emit("conversation:leave", conversation_id);
-    };
+    try {
+      socket.emit("conversation:join", conversation_id);
+      console.log("JOINED✅");
+      getMessages();
+      return () => {
+        socket.emit("conversation:leave", conversation_id);
+      };
+    } catch (error) {
+      console.log("Error in getting messages");
+    }
   }, [conversation_id]);
   useEffect(() => {
     listRef.current?.scrollToEnd({ animated: true });
@@ -46,7 +51,7 @@ const Chat = () => {
         return prev.map((m) => (m.id === temp_id ? message : m));
       }
 
-      return [...prev, message];
+      return [message, ...prev];
     });
   };
 
@@ -85,7 +90,7 @@ const Chat = () => {
         showsVerticalScrollIndicator={false}
         inverted
         ref={listRef}
-        data={[...messages].reverse()}
+        data={messages}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <MessageBox key={item.id} message={item} />}
       ></FlatList>

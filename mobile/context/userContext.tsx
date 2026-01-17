@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       socket.connect();
       const res = await getMe();
 
-      const me = res.data.user;
+      const me = res.user;
       socket.user_id = me.id;
       console.log("SOCKET CONNECTED ✅");
       setUser(me);

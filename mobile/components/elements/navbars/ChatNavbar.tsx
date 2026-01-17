@@ -25,7 +25,7 @@ export default function ChatNavbar() {
           </TouchableOpacity>
           <View className="ml-4">
             <Text className="text-gray-200 text-lg font-semibold">
-              {user.name}
+              {user.username}
             </Text>
             <View className="flex flex-row items-center mt-1">
               <View

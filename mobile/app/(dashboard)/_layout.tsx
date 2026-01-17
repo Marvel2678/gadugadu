@@ -1,36 +1,64 @@
 import DashboardNavbar from "@/components/elements/navbars/DashboardNavbar";
+import CustomTab from "@/components/ui/customTabBar/CustomTab";
 import { useAuth } from "@/hooks/useAuth";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Redirect, Tabs } from "expo-router";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Mater from "react-native-vector-icons/MaterialIcons";
 
 export default function DashboardLayout() {
   const { user, loading } = useAuth();
 
-  if (loading) {
-    return (
-      <SafeAreaView className="flex-1 bg-brand3 items-center justify-center">
-        <Text className="text-black text-xl">Ładowanie...</Text>
-      </SafeAreaView>
-    );
-  }
-  if (user === null) {
-    return <Redirect href="/(auth)/login" withAnchor={true} />;
-  }
+  if (loading) return <Text>Loading</Text>;
+  if (!user) return <Redirect href="/(auth)/login" />;
 
   return (
-    <SafeAreaView className="flex-1">
-      <DashboardNavbar />
+    <>
+      <SafeAreaView edges={["top"]}>
+        <DashboardNavbar />
+      </SafeAreaView>
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: "#000000",
-          tabBarStyle: { backgroundColor: "#E8DC2A" },
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            backgroundColor: "#E8DC2A",
+            height: 80,
+          },
+          tabBarItemStyle: {
+            justifyContent: "center",
+            alignItems: "center",
+          },
         }}
       >
-        <Tabs.Screen name="dashboard" options={{ title: "Home" }} />
-        <Tabs.Screen name="options" options={{ title: "Opcje" }} />
+        <Tabs.Screen
+          name="dashboard"
+          options={{
+            tabBarButton: (props) => (
+              <CustomTab
+                iconName="home"
+                label="Chaty"
+                focused={props["aria-selected"]}
+                onPress={props.onPress}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="options"
+          options={{
+            tabBarButton: (props) => (
+              <CustomTab
+                iconName="settings"
+                label="Options"
+                focused={props["aria-selected"]}
+                onPress={props.onPress}
+              />
+            ),
+          }}
+        />
       </Tabs>
-    </SafeAreaView>
+    </>
   );
 }
