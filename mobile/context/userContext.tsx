@@ -66,11 +66,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setLoading(true);
       socket.disconnect();
-      const res = await apiMiddleware.post("/auth/logout", {});
+      const res = await apiMiddleware.post("/auth/logout", { id: user?.id });
       if (res.status === 200) {
         console.log("LOGOUT SUCCESS:", res.data);
       }
-      await tokenStorage.clear();
       setUser(null);
     } catch (error) {
       console.log("LOGOUT ERROR:", error);

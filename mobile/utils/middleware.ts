@@ -1,7 +1,6 @@
 import axios from "axios";
 import { AppConfig } from "./appConfig";
 import { tokenStorage } from "./token.storage";
-import { socket } from "./socket";
 
 export const apiMiddleware = axios.create({
   baseURL: AppConfig.SERVER_URL,
@@ -40,7 +39,7 @@ apiMiddleware.interceptors.response.use(
             {
               refreshToken,
             },
-            { headers: { skipAuth: true } }
+            { headers: { skipAuth: true } },
           );
           const { accessToken } = res.data;
           console.log("RESET");
@@ -51,7 +50,11 @@ apiMiddleware.interceptors.response.use(
           console.error("Failed to refresh token:", err);
         }
       }
-    }
-    return Promise.reject(error);
-  }
+    } else if (
+      error.response.status === 403 &&
+      originalRequest.headers?.skipAuth !== true
+    ) {
+      await tokenStorage.clear();
+    } else return Promise.reject(error);
+  },
 );

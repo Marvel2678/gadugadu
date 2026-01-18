@@ -19,7 +19,7 @@ export const RegisterUser = async (req, res) => {
 
   const userExists = await db.query(
     "SELECT * FROM users WHERE email = $1 OR username = $2",
-    [email, username]
+    [email, username],
   );
 
   console.log("count", userExists.rowCount);
@@ -43,7 +43,7 @@ export const RegisterUser = async (req, res) => {
 
   await db.query(
     "INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4)",
-    [name, username, email, hashed]
+    [name, username, email, hashed],
   );
 
   return res.status(201).json({ ok: true, message: "User registered" });
@@ -90,7 +90,7 @@ export const LoginUser = async (req, res) => {
 export const GetUser = async (req, res) => {
   const user = await db.query(
     "SELECT id, name, email FROM users WHERE id = $1",
-    [req.user.id]
+    [req.user.id],
   );
 
   res.json({ ok: true, user: user.rows[0] });
@@ -105,12 +105,12 @@ export const RefreshToken = async (req, res) => {
 
     const decodedToken = jwt.verify(
       incomingRefreshToken,
-      process.env.JWT_SECRET_REFRESH_TOKEN
+      process.env.JWT_SECRET_REFRESH_TOKEN,
     );
 
     const userQuery = await db.query(
       "SELECT refreshToken from users WHERE id=$1",
-      [decodedToken.id]
+      [decodedToken.id],
     );
 
     if (userQuery.rowCount == 0) {
@@ -133,24 +133,28 @@ export const RefreshToken = async (req, res) => {
 };
 
 export const userLogout = async (req, res) => {
-  const user_id = req.user.id;
+  const { refreshToken } = req.body;
 
-  const user = await db.query("SELECT refreshToken FROM users WHERE id=$1", [
-    user_id,
-  ]);
-
-  if (user.rowCount === 0) {
-    return res.json({ ok: false, message: "This user doesn't exists" });
+  if (!refreshToken && refreshToken !== "") {
+    return res.json({ message: "Invalid refreshToken provided" });
   }
 
-  console.log(user.rows[0]);
-  if (user.rows[0].refreshtoken == null) {
+  const userRefreshToken = await db.query(
+    "SELECT refreshToken from users WHERE refreshToken=$1;",
+    [refreshToken],
+  );
+  if (!userRefreshToken.rows[0]) {
+    return res.json({ message: "Invalid refreshToken provided" });
+  }
+
+  console.log(userRefreshToken.rows[0]);
+  if (userRefreshToken.rows[0] == null) {
     return res.json({ ok: false, message: "User logged out" });
   }
 
   await db.query(
     "UPDATE users SET online=FALSE, refreshToken=NULL WHERE id=$1",
-    [user_id]
+    [user_id],
   );
 
   const userTEST = await db.query("SELECT * FROM users WHERE id=$1", [user_id]);
