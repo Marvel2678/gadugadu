@@ -27,7 +27,7 @@ export default function Login() {
           email: usernameOrEmail,
           password,
         },
-        { headers: { skipAuth: true } }
+        { headers: { skipAuth: true } },
       );
 
       const data = res.data;
@@ -36,7 +36,7 @@ export default function Login() {
         return setErr(data.message || "Błąd logowania");
       }
 
-      login(data.accessToken, data.refreshToken);
+      await login(data.accessToken, data.refreshToken);
     } catch (err) {
       setErr("Brak połączenia z serwerem");
       console.log(err);
@@ -47,7 +47,7 @@ export default function Login() {
     <View className="bg-brand3 flex-1 items-center justify-center p-6">
       <View className="bg-brand3 w-full max-w-md rounded-lg p-6">
         <Text className="mb-4 text-2xl text-white">Login</Text>
-        <Text className="text-white">{err}</Text>
+        <Text className="text-black">{err}</Text>
         <TextInput
           value={usernameOrEmail}
           onChangeText={setUsernameOrEmail}

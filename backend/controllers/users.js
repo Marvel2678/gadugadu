@@ -59,7 +59,7 @@ export const LoginUser = async (req, res) => {
     const user = result.rows[0];
 
     if (!user || user === undefined)
-      return res.status(401).json({ ok: false, message: "Invalid email" });
+      return res.json({ ok: false, message: "Invalid email" });
 
     const valid = await bcrypt.compare(password, user.password);
 
@@ -88,19 +88,23 @@ export const LoginUser = async (req, res) => {
 };
 
 export const GetUser = async (req, res) => {
-  const user = await db.query(
-    "SELECT id, name, email FROM users WHERE id = $1",
-    [req.user.id],
-  );
+  try {
+    const user = await db.query(
+      "SELECT id, name, email FROM users WHERE id = $1",
+      [req.user.id],
+    );
 
-  res.json({ ok: true, user: user.rows[0] });
+    return res.json({ ok: true, user: user.rows[0] });
+  } catch (error) {
+    return res.json({ ok: false, message: "Something went wrong" });
+  }
 };
 
 export const RefreshToken = async (req, res) => {
   const incomingRefreshToken = req.body.refreshToken;
   try {
     if (!incomingRefreshToken) {
-      return res.status(401).json({ ok: false, message: "No refreshToken" });
+      return res.status(403).json({ ok: false, message: "No refreshToken" });
     }
 
     const decodedToken = jwt.verify(
@@ -114,7 +118,7 @@ export const RefreshToken = async (req, res) => {
     );
 
     if (userQuery.rowCount == 0) {
-      return res.status(401).json({ ok: false, message: "Invalid token" });
+      return res.status(403).json({ ok: false, message: "Invalid token" });
     }
     if (incomingRefreshToken !== userQuery.rows[0].refreshtoken) {
       return res
@@ -132,32 +136,32 @@ export const RefreshToken = async (req, res) => {
   }
 };
 
-export const userLogout = async (req, res) => {
-  const { refreshToken } = req.body;
+// export const userLogout = async (req, res) => {
+//   const { refreshToken } = req.body;
 
-  if (!refreshToken && refreshToken !== "") {
-    return res.json({ message: "Invalid refreshToken provided" });
-  }
+//   if (!refreshToken && refreshToken !== "") {
+//     return res.json({ message: "Invalid refreshToken provided" });
+//   }
 
-  const userRefreshToken = await db.query(
-    "SELECT refreshToken from users WHERE refreshToken=$1;",
-    [refreshToken],
-  );
-  if (!userRefreshToken.rows[0]) {
-    return res.json({ message: "Invalid refreshToken provided" });
-  }
+//   const userRefreshToken = await db.query(
+//     "SELECT refreshToken from users WHERE refreshToken=$1;",
+//     [refreshToken],
+//   );
+//   if (!userRefreshToken.rows[0]) {
+//     return res.json({ message: "Invalid refreshToken provided" });
+//   }
 
-  console.log(userRefreshToken.rows[0]);
-  if (userRefreshToken.rows[0] == null) {
-    return res.json({ ok: false, message: "User logged out" });
-  }
+//   console.log(userRefreshToken.rows[0]);
+//   if (userRefreshToken.rows[0] == null) {
+//     return res.json({ ok: false, message: "User logged out" });
+//   }
 
-  await db.query(
-    "UPDATE users SET online=FALSE, refreshToken=NULL WHERE id=$1",
-    [user_id],
-  );
+//   await db.query(
+//     "UPDATE users SET online=FALSE, refreshToken=NULL WHERE id=$1",
+//     [user_id],
+//   );
 
-  const userTEST = await db.query("SELECT * FROM users WHERE id=$1", [user_id]);
+//   const userTEST = await db.query("SELECT * FROM users WHERE id=$1", [user_id]);
 
-  return res.json({ ok: true, message: "Logged out" });
-};
+//   return res.json({ ok: true, message: "Logged out" });
+// };

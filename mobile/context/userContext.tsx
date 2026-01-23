@@ -26,14 +26,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const getter = async () => {
     try {
       setLoading(true);
+      const token = await tokenStorage.getAccessToken();
+      if (!token) {
+        setUser(null);
+        return;
+      }
       const res = await getMe();
-      reconnectAndSyncSocket();
-      console.log("REFRESHING SOCKET ✅");
+      console.log("RESPONSE GETTER:", res);
+      if (res.ok === false) {
+        return new Error("Unauthorized");
+      }
       const me = res.user;
       setUser(me);
+      reconnectAndSyncSocket();
+      console.log("REFRESHING SOCKET ✅");
       setLoading(false);
     } catch (error) {
-      setUser(null);
       console.log("GETTER ERROR:", error);
       await logout();
     } finally {
@@ -66,10 +74,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setLoading(true);
       socket.disconnect();
-      const res = await apiMiddleware.post("/auth/logout", { id: user?.id });
-      if (res.status === 200) {
-        console.log("LOGOUT SUCCESS:", res.data);
-      }
+      await tokenStorage.clear();
+      // const refreshToken = await tokenStorage.getRefreshToken();
+      // const res = await apiMiddleware.post(
+      //   "/auth/logout",
+      //   {
+      //     refreshToken: refreshToken,
+      //   },
+      //   {
+      //     headers: {
+      //       skipAuth: true,
+      //     },
+      //   },
+      // );
+      // if (res.status === 200) {
+      //   console.log("LOGOUT SUCCESS:", res.data);
+      // }
       setUser(null);
     } catch (error) {
       console.log("LOGOUT ERROR:", error);

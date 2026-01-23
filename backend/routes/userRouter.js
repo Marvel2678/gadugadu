@@ -4,7 +4,7 @@ import {
   LoginUser,
   RefreshToken,
   RegisterUser,
-  userLogout,
+  // userLogout,
 } from "../controllers/users.js";
 import { auth } from "../middleware/auth.js";
 
@@ -12,7 +12,7 @@ const userRouter = express.Router();
 
 userRouter.post("/register", RegisterUser);
 userRouter.post("/login", LoginUser);
-userRouter.post("/logout", auth, userLogout);
+// userRouter.post("/logout", userLogout);
 userRouter.post("/refreshToken", RefreshToken);
 userRouter.get("/me", auth, GetUser);
 

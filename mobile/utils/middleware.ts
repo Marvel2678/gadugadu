@@ -37,7 +37,7 @@ apiMiddleware.interceptors.response.use(
           const res = await axios.post(
             AppConfig.SERVER_URL + "/auth/refreshToken",
             {
-              refreshToken,
+              refreshToken: refreshToken,
             },
             { headers: { skipAuth: true } },
           );
@@ -48,13 +48,11 @@ apiMiddleware.interceptors.response.use(
           return apiMiddleware(originalRequest);
         } catch (err) {
           console.error("Failed to refresh token:", err);
+          return Promise.reject(err);
         }
       }
-    } else if (
-      error.response.status === 403 &&
-      originalRequest.headers?.skipAuth !== true
-    ) {
-      await tokenStorage.clear();
-    } else return Promise.reject(error);
+    } else {
+      return Promise.reject(error);
+    }
   },
 );
