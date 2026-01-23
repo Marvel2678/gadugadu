@@ -48,6 +48,7 @@ apiMiddleware.interceptors.response.use(
           return apiMiddleware(originalRequest);
         } catch (err) {
           console.error("Failed to refresh token:", err);
+          await tokenStorage.clear();
           return Promise.reject(err);
         }
       }

@@ -17,9 +17,9 @@ const Chat = () => {
 
   useEffect(() => {
     try {
+      getMessages();
       socket.emit("conversation:join", conversation_id);
       console.log("JOINED✅");
-      getMessages();
       return () => {
         socket.emit("conversation:leave", conversation_id);
       };
@@ -28,7 +28,10 @@ const Chat = () => {
     }
   }, [conversation_id]);
   useEffect(() => {
-    listRef.current?.scrollToEnd({ animated: true });
+    listRef.current?.scrollToIndex({
+      index: messages[messages.length - 1].id,
+      animated: true,
+    });
   }, [messages]);
   useEffect(() => {
     socket.on("message:new", ({ message, temp_id }) => {
@@ -74,7 +77,7 @@ const Chat = () => {
   const getMessages = async () => {
     try {
       const res = await apiMiddleware.get(
-        AppConfig.SERVER_URL + `/message/getMessages/${conversation_id}`
+        AppConfig.SERVER_URL + `/message/getMessages/${conversation_id}`,
       );
       setMessages(res.data.messages);
       console.log("MESSAGES", res.data.messages);

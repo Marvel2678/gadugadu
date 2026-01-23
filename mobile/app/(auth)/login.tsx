@@ -6,13 +6,14 @@ import { AppConfig } from "@/utils/appConfig";
 import { AuthContext } from "@/context/userContext";
 import axios from "axios";
 import { apiMiddleware } from "@/utils/middleware";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Login() {
   const router = useRouter();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
 
   const Login = async () => {
     try {
@@ -37,10 +38,10 @@ export default function Login() {
       }
 
       await login(data.accessToken, data.refreshToken);
-    } catch (err) {
+    } catch (err: unknown) {
       setErr("Brak połączenia z serwerem");
       console.log(err);
-      console.log(err.response.message);
+      console.log(err?.response?.message);
     }
   };
   return (

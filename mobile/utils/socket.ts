@@ -17,13 +17,14 @@ export const reconnectAndSyncSocket = async () => {
   try {
     if (token) {
       socket.auth = { token };
+      if (!socket.connected) {
+        socket.connect();
+      }
+      console.log("CONNECTED ✅");
       socket.user_id = user.id;
       socket.emit("user:sync", (data) => {
         console.log("USER SYNC EVENT:", data);
       });
-    }
-    if (!socket.connected) {
-      socket.connect();
     }
   } catch (error) {
     console.error("Socket reconnection error:", error);
