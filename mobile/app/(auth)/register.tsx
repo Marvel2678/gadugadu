@@ -41,7 +41,7 @@ export default function Register() {
           email,
           password,
         },
-        { headers: { skipAuth: true } }
+        { headers: { skipAuth: true } },
       );
 
       const data = await res.data;
@@ -85,6 +85,7 @@ export default function Register() {
           onChangeText={setPassword}
           placeholder="Hasło"
           className="mb-3 rounded bg-white p-2"
+          textContentType="password"
         />
         <Button title="Zarejestruj" onPress={register} color="#F25912" />
       </View>

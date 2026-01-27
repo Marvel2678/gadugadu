@@ -8,7 +8,7 @@ import { socket } from "@/utils/socket";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useRef, useState } from "react";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, TextInput, Button } from "react-native";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -71,6 +71,8 @@ export default function Dashboard() {
     }
   };
 
+  const handlePress = async () => {};
+
   const { user, loading } = useAuth();
 
   console.log(user);
@@ -96,6 +98,7 @@ export default function Dashboard() {
           <ChatListElement key={item.conversation_id} chat={item} />
         )}
       />
+      <Button title="create" onPress={handlePress} />
     </View>
   );
 }

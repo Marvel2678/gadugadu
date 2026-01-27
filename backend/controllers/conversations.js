@@ -24,7 +24,7 @@ export const createConversation = async (req, res) => {
       GROUP BY c.id
       HAVING COUNT(DISTINCT cm.user_id) = 2
       `,
-        [myUserId, otherUserId]
+        [myUserId, otherUserId],
       );
 
       if (existsConversation.rowCount > 0) {
@@ -37,7 +37,7 @@ export const createConversation = async (req, res) => {
     }
 
     const result = await db.query(
-      "INSERT INTO conversations (is_group) VALUES (FALSE) RETURNING id"
+      "INSERT INTO conversations (is_group) VALUES (FALSE) RETURNING id",
     );
 
     const conversation_id = result.rows[0].id;
@@ -45,14 +45,14 @@ export const createConversation = async (req, res) => {
     await db.query(
       `INSERT INTO conversation_members (name, conversation_id, user_id)
        VALUES ($1, $2, $3)`,
-      ["Konwersacja prywatna", conversation_id, user_from_req]
+      ["Konwersacja prywatna", conversation_id, user_from_req],
     );
 
     for (const user of users) {
       await db.query(
         `INSERT INTO conversation_members (name, conversation_id, user_id)
          VALUES ($1, $2, $3)`,
-        [`Konwersacja z ${user_from_req}`, conversation_id, user.id]
+        [`Konwersacja z ${user_from_req}`, conversation_id, user.id],
       );
     }
 
@@ -87,7 +87,7 @@ export const getConversations = async (req, res) => {
     for (const conversation of conversations) {
       const otherUsers = await getOtherUsers(
         conversation.conversation_id,
-        userID
+        userID,
       );
       conversation.other_users = otherUsers;
     }
@@ -98,5 +98,31 @@ export const getConversations = async (req, res) => {
   } catch (error) {
     console.error("GET CONVERSATIONS ERROR:", error);
     return res.status(500).json({ ok: false, message: "Server error" });
+  }
+};
+
+export const searchUsers = async (req, res) => {
+  const query = req.query.q;
+  try {
+    if (query.length < 1 || !query) {
+      return res.json({ ok: true, users: [] });
+    }
+
+    const data = await db.query(
+      `
+      SELECT u.id, u.username, u.name, u.avatar_url FROM users u WHERE name ILIKE $1 ORDER BY name LIMIT 5
+      `,
+      [`%${query}%`],
+    );
+
+    const users = data.rows;
+
+    return res.json({ ok: true, users: users });
+  } catch (error) {
+    console.log("Something went wrong with searching a user", error);
+    return res.status(500).json({
+      ok: false,
+      message: "Something went wrong with searching a user",
+    });
   }
 };

@@ -60,6 +60,7 @@ export default function Login() {
           onChangeText={setPassword}
           placeholder="Hasło"
           className="mb-3 rounded bg-white p-2"
+          textContentType="password"
         />
         <Button
           title="Zaloguj"
