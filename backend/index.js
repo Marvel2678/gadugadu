@@ -17,7 +17,12 @@ const server = http.createServer(app);
 export const db = await ConnectToDatabase(ServerConfiguration);
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  }),
+);
 app.use("/auth", userRouter);
 app.use("/conversation", conversationRouter);
 app.use("/message", messageRouter);

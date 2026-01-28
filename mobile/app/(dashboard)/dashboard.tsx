@@ -1,4 +1,5 @@
 import ChatListElement from "@/components/elements/ChatListElement";
+import CreateChatModal from "@/components/elements/modals/CreateChatModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useChats } from "@/hooks/useChats";
 import { ChatType } from "@/types/ChatsType";
@@ -8,11 +9,19 @@ import { socket } from "@/utils/socket";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useRef, useState } from "react";
-import { View, Text, FlatList, TextInput, Button } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TextInput,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 
 export default function Dashboard() {
   const router = useRouter();
   const { chats, setChats } = useChats();
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     getChats();
     const onUserOnline = (data) => {
@@ -63,6 +72,7 @@ export default function Dashboard() {
       const res = await apiMiddleware.get(
         AppConfig.SERVER_URL + "/conversation/getConversations",
       );
+      console.log(res);
       const data = res.data;
       setChats(data.conversations);
     } catch (error) {
@@ -70,8 +80,6 @@ export default function Dashboard() {
       console.log("Błąd podczas pobierania czatów");
     }
   };
-
-  const handlePress = async () => {};
 
   const { user, loading } = useAuth();
 
@@ -98,7 +106,10 @@ export default function Dashboard() {
           <ChatListElement key={item.conversation_id} chat={item} />
         )}
       />
-      <Button title="create" onPress={handlePress} />
+      <TouchableOpacity onPress={() => setOpen(true)}>
+        <Text style={{ fontSize: 24 }}>＋</Text>
+      </TouchableOpacity>
+      {open && <CreateChatModal onClose={() => setOpen(false)} />}
     </View>
   );
 }
