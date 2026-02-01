@@ -13,13 +13,23 @@ const Chat = () => {
   const { id: conversation_id } = useLocalSearchParams();
   const listRef = useRef<FlatList>(null);
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    <View>
+      <Text>Loading...</Text>
+    </View>;
+  }
 
   useEffect(() => {
     try {
-      getMessages();
-      socket.emit("conversation:join", conversation_id);
-      console.log("JOINED✅");
+      const init = async () => {
+        await getMessages();
+        socket.emit("conversation:join", conversation_id);
+        console.log("JOINED✅");
+      };
+
+      init();
       return () => {
         socket.emit("conversation:leave", conversation_id);
       };
@@ -28,19 +38,20 @@ const Chat = () => {
     }
   }, [conversation_id]);
   useEffect(() => {
-    listRef.current?.scrollToIndex({
-      index: messages[messages.length - 1].id,
-      animated: true,
-    });
+    if (messages.length > 0)
+      listRef.current?.scrollToOffset({
+        offset: 0,
+        animated: true,
+      });
   }, [messages]);
   useEffect(() => {
-    socket.on("message:new", ({ message, temp_id }) => {
-      console.log("JEST TUTAJ");
+    const OnNewMessage = ({ message, temp_id }) => {
       handleNewMessage({ message, temp_id });
-    });
+    };
+    socket.on("message:new", OnNewMessage);
 
     return () => {
-      socket.off("message:new", handleNewMessage);
+      socket.off("message:new", OnNewMessage);
     };
   }, []);
 
