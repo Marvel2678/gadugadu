@@ -14,7 +14,7 @@ export default function DashboardLayout() {
   if (!user) return <Redirect href="/(auth)/login" />;
 
   return (
-    <>
+    <View className="relative">
       <SafeAreaView edges={["top"]}>
         <DashboardNavbar />
       </SafeAreaView>
@@ -59,6 +59,6 @@ export default function DashboardLayout() {
           }}
         />
       </Tabs>
-    </>
+    </View>
   );
 }

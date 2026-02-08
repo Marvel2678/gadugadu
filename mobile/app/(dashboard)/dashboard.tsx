@@ -106,8 +106,13 @@ export default function Dashboard() {
           <ChatListElement key={item.conversation_id} chat={item} />
         )}
       />
-      <TouchableOpacity onPress={() => setOpen(true)}>
-        <Text style={{ fontSize: 24 }}>＋</Text>
+      <TouchableOpacity
+        onPress={() => setOpen(true)}
+        className="border w-[80px] h-[80px] rounded-full flex justify-center items-center absolute bottom-10 right-5 bg-black"
+      >
+        <Text className="text-4xl items-center justify-center text-brand1 font-bold">
+          ＋
+        </Text>
       </TouchableOpacity>
       {open && <CreateChatModal onClose={() => setOpen(false)} />}
     </View>

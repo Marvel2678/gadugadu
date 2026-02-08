@@ -6,11 +6,12 @@ import {
   createRefreshToken,
 } from "../utils/createTokens.js";
 import jwt from "jsonwebtoken";
+import { EmailValidator } from "../utils/validator.js";
 
 export const RegisterUser = async (req, res) => {
   const { name, username, email, password } = req.body;
 
-  if (!name || !email || !password) {
+  if (!name || !username || !email || !password) {
     return res.json({
       ok: false,
       message: "You have to complete all boxes",
@@ -35,9 +36,15 @@ export const RegisterUser = async (req, res) => {
       message: "This email already exists! Try another one",
     });
   }
+  const EmailValidatorDetails = EmailValidator(email);
+  if (!EmailValidatorDetails === null) {
+    return res.json({ ok: false, message: EmailValidatorDetails });
+  }
 
-  //TODO:
-  //dorobić bezpieczeństwo: email checker, password checker
+  const PasswordValidatorDetails = EmailValidator(email);
+  if (!PasswordValidatorDetails === null) {
+    return res.json({ ok: false, message: PasswordValidatorDetails });
+  }
 
   const hashed = await bcrypt.hash(password, 10);
 

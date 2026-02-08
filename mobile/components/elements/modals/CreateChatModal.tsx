@@ -38,8 +38,11 @@ const CreateChatModal = ({ onClose }) => {
     }
   };
   return (
-    <Pressable className="" onPress={onClose}>
-      <Pressable className="" onPress={() => {}}>
+    <Pressable
+      className="w-full h-full relative bg-[rgba(5,5,5,30%)] inset-0"
+      onPress={onClose}
+    >
+      <Pressable className="bg-" onPress={() => {}}>
         <View className="">
           <Text className="">Nowa rozmowa</Text>
           <TouchableOpacity onPress={onClose}>
