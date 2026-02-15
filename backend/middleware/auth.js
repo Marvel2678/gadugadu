@@ -13,12 +13,12 @@ export function auth(req, res, next) {
   try {
     const decoded = jwt.verify(
       token,
-      ServerConfiguration.JWT_SECRET_ACCESS_TOKEN
+      ServerConfiguration.JWT_SECRET_ACCESS_TOKEN,
     );
     req.user = decoded;
     next();
-  } catch {
-    res.status(401).json({ error: "Invalid token" });
+  } catch (error) {
     console.error("ERROR TOKEN: " + token);
+    return res.status(401).json({ error: "Invalid token" });
   }
 }

@@ -98,7 +98,6 @@ export default function Dashboard() {
 
   return (
     <View className="flex-1 bg-brand3 py-4">
-      <Text className="text-black text-xl p-4">USER: {user.name}</Text>
       <FlatList
         data={chats}
         keyExtractor={(item) => item.conversation_id.toString()}
