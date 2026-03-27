@@ -1,0 +1,23 @@
+# Configuration of the app
+
+## ENV
+
+On the mobile side
+
+```bash
+EXPO_PUBLIC_SERVER_URL=YOUR_SERVER_URL
+EXPO_PUBLIC_SOCKET_URL=YOUR_SERVER_SOCKET_URL (Majority the same as Server URL)
+```
+
+On the backend side
+if dev mode file must to be .env.development
+
+```bash
+SERVER_PORT=
+DATABASE_USER=
+DATABASE_PASSWORD=
+DATABASE_HOST=
+DATABASE_NAME=
+JWT_SECRET_ACCESS_TOKEN=
+JWT_SECRET_REFRESH_TOKEN=
+```

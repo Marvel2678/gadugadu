@@ -22,6 +22,7 @@ export default function Dashboard() {
   const router = useRouter();
   const { chats, setChats } = useChats();
   const [open, setOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false)
   useEffect(() => {
     getChats();
     const onUserOnline = (data) => {
@@ -113,7 +114,7 @@ export default function Dashboard() {
           ＋
         </Text>
       </TouchableOpacity>
-      {open && <CreateChatModal onClose={() => setOpen(false)} />}
+      {open && <CreateChatModal onClose={() => setOpen(false)} isVisible={isVisible} />}
     </View>
   );
 }

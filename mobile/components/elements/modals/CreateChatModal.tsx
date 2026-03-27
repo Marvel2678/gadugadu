@@ -5,11 +5,12 @@ import {
   Button,
   TouchableOpacity,
   Pressable,
+  Modal,
 } from "react-native";
 import React, { useState } from "react";
 import { apiMiddleware } from "@/utils/middleware";
 
-const CreateChatModal = ({ onClose }) => {
+const CreateChatModal = ({ onClose, visible }) => {
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [result, setResult] = useState([]);
   const [err, setErr] = useState();
@@ -38,13 +39,14 @@ const CreateChatModal = ({ onClose }) => {
     }
   };
   return (
-    <Pressable
-      className="w-full h-full relative bg-[rgba(5,5,5,30%)] inset-0 z-0"
-      onPress={onClose}
+    <Modal
+      visible={visible}
+      animationType="fade"
+      // transparent
     >
       <Pressable
-        className="w-[90%] bg-red-500 rounded-lg p-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-        onPress={() => {}}
+        className="flex justify-center items-center bg-[rgba(0,0,0,0.5]"
+        onPress={onClose}
       >
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-lg font-semibold">Nowa rozmowa</Text>
@@ -69,7 +71,7 @@ const CreateChatModal = ({ onClose }) => {
 
         {err ? <Text style={{ color: "red" }}>{err}</Text> : null}
       </Pressable>
-    </Pressable>
+    </Modal>
   );
 };
 

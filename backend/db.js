@@ -1,6 +1,5 @@
 import pg from "pg";
 import fs from "fs";
-import dotenv from "dotenv";
 
 export default async function ConnectToDatabase(config) {
   // 1 - connect to postgres (admin connection)
