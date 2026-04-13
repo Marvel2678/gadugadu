@@ -3,9 +3,9 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withRepeat,
-} from 'react-native-reanimated';
-import { View } from 'react-native';
-import { useEffect } from 'react';
+} from "react-native-reanimated";
+import { View } from "react-native";
+import { useEffect } from "react";
 
 export default function TypingBox() {
   const scales = [useSharedValue(1), useSharedValue(1), useSharedValue(1)];

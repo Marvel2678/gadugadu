@@ -10,11 +10,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand1: "#E8DC2A",
-        brand2: "#000000",
-        brand3: "#FFFFFF",
-        secondary: "#444444",
-        muted: "#777777",
+        background: "#0f0f0f",
+        card: "#1a1a1a",
+        cardSoft: "#262626",
+        border: "#333",
+        text: "#ffffff",
+        textSecondary: "#9ca3af",
+        accent: "#E8DC2A",
       },
       animation: {
         typewriter: "typewriter 2s steps(11) forwards",

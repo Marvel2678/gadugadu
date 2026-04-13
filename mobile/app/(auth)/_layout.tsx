@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Stack, Tabs } from "expo-router";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,9 +18,13 @@ export default function AuthLayout() {
   }
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "blue" }}>
-      <Tabs.Screen name="register" options={{ title: "Zarejestruj się" }} />
-      <Tabs.Screen name="login" options={{ title: "Zaloguj się" }} />
-    </Tabs>
+    // <Tabs screenOptions={{ tabBarActiveTintColor: "blue" }}>
+    //   <Tabs.Screen name="register" options={{ title: "Zarejestruj się" }} />
+    //   <Tabs.Screen name="login" options={{ title: "Zaloguj się" }} />
+    // </Tabs>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="login" />
+      <Stack.Screen name="register" />
+    </Stack>
   );
 }

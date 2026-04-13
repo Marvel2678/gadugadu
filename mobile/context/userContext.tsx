@@ -31,12 +31,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(null);
         return;
       }
-      reconnectAndSyncSocket();
-      console.log("REFRESHING SOCKET ✅");
       const res = await getMe();
       if (res.ok === false) {
         return new Error("Unauthorized");
       }
+      reconnectAndSyncSocket(res.user);
+      console.log("REFRESHING SOCKET ✅");
       const me = res.user;
       setUser(me);
       setLoading(false);

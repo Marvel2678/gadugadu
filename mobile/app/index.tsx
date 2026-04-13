@@ -5,6 +5,8 @@ import TypingBox from "@/components/TypingBox";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "@/global.css";
 import { useAuth } from "@/hooks/useAuth";
+import ActionBubble from "@/components/ActionBubble";
+import MessageBubble from "@/components/MessageBubble";
 
 export default function Root() {
   const router = useRouter();
@@ -29,43 +31,35 @@ export default function Root() {
   }
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center bg-brand3 px-6">
-      <View className="w-full max-w-md rounded-xl bg-brand2 p-6">
-        <Text className="mb-4 text-center text-2xl font-bold text-brand1">
-          GaduGadu
+    <SafeAreaView className="flex-1 px-4 bg-background">
+      {/* HEADER */}
+      <View className="pt-6 pb-4">
+        <Text className="text-3xl font-bold text-accent">GaduGadu</Text>
+        <Text className="text-lg text-textSecondary">
+          Młodzieżowy komunikator wraca do gry!
         </Text>
-        <View className="mb-4 rounded-lg bg-brand3 p-4">
-          <Text className="text-lg text-brand2">
-            Młodzieżowy komunikator wraca do gry!
-          </Text>
-        </View>
-
-        {step === 1 && <TypingBox />}
-
-        {step === 2 && (
-          <View className="mb-4 rounded-lg bg-brand3 p-4">
-            <Text className="text-lg text-brand2">
-              Chcesz utworzyć konto albo zalogować się by dołączyć do nas?
-            </Text>
-          </View>
-        )}
-
-        {step === 2 && (
-          <TouchableOpacity
-            className="mt-4 bg-[#E8DC2A] rounded-xl py-3"
-            onPress={() => router.push("/(auth)/login")}
-          >
-            <Text className="text-center font-semibold text-black text-lg">
-              Dołączam
-            </Text>
-          </TouchableOpacity>
-        )}
       </View>
-      <View className="mt-6">
-        <Button
-          title="Go to Dashboard (dev)"
-          onPress={() => router.push("/(dashboard)/dashboard")}
-        />
+
+      {/* CHAT */}
+      <View className="flex-1 justify-end pb-6">
+        <View className="flex flex-col">
+          {/* Message 1 */}
+          <MessageBubble text="Hej 👋" isUser={false} />
+
+          {/* Typing */}
+          {step === 1 && <TypingBox />}
+
+          {/* Message 2 */}
+          {step === 2 && (
+            <>
+              <MessageBubble
+                text="Chcesz dołączyć do naszej aplikacji?"
+                isUser={false}
+              />
+              <ActionBubble onPress={() => router.push("/(auth)/login")} />
+            </>
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );
