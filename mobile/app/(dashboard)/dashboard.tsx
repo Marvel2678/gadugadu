@@ -17,12 +17,13 @@ import {
   Button,
   TouchableOpacity,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Dashboard() {
   const router = useRouter();
   const { chats, setChats } = useChats();
   const [open, setOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
     getChats();
     const onUserOnline = (data) => {
@@ -98,23 +99,41 @@ export default function Dashboard() {
   }
 
   return (
-    <View className="flex-1 bg-brand3 py-4">
+    <SafeAreaView className="flex-1 bg-background px-4 pt-4">
       <FlatList
         data={chats}
         keyExtractor={(item) => item.conversation_id.toString()}
-        renderItem={({ item }) => (
-          <ChatListElement key={item.conversation_id} chat={item} />
-        )}
+        contentContainerStyle={{
+          paddingBottom: 120,
+        }}
+        renderItem={({ item }) => <ChatListElement chat={item} />}
+        ListEmptyComponent={
+          <View className="flex-1 justify-center items-center mt-20">
+            <Text className="text-textSecondary text-lg">Brak rozmów 🐝</Text>
+            <Text className="text-textSecondary text-sm mt-2">
+              Rozpocznij pierwszą konwersację
+            </Text>
+          </View>
+        }
       />
+
+      {/* FAB */}
       <TouchableOpacity
         onPress={() => setOpen(true)}
-        className="border w-[80px] h-[80px] rounded-full flex justify-center items-center absolute bottom-10 right-5 bg-black"
+        activeOpacity={0.8}
+        className="absolute bottom-8 right-6 w-[64px] h-[64px] rounded-full items-center justify-center"
+        style={{
+          backgroundColor: "#E8DC2A",
+          shadowColor: "#E8DC2A",
+          shadowOpacity: 0.4,
+          shadowRadius: 10,
+        }}
       >
-        <Text className="text-4xl items-center justify-center text-brand1 font-bold">
-          ＋
-        </Text>
+        <Text className="text-black text-3xl font-bold">＋</Text>
       </TouchableOpacity>
-      {open && <CreateChatModal onClose={() => setOpen(false)} isVisible={isVisible} />}
-    </View>
+
+      {/* MODAL */}
+      <CreateChatModal visible={open} onClose={() => setOpen(false)} />
+    </SafeAreaView>
   );
 }

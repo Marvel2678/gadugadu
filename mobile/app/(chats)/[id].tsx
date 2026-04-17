@@ -98,7 +98,7 @@ const Chat = () => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-background">
       <FlatList
         className="flex-1 m-4"
         showsVerticalScrollIndicator={false}

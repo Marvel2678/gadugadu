@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Redirect, Slot } from "expo-router";
 import ChatNavbar from "@/components/elements/navbars/ChatNavbar";
 import "@/global.css";
-import { Text, View } from "react-native";
+import { StatusBar, Text, View } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 import MessageBox from "@/components/MessageBox";
 import SendMessageFooter from "@/components/SendMessageFooter";
@@ -22,12 +22,15 @@ const ChatsLayout = () => {
     return <Redirect href="/(auth)/login" withAnchor={true} />;
   }
   return (
-    <SafeAreaView className="flex-1 bg-brand3">
-      <ChatNavbar />
-      <View className="flex-1">
-        <Slot />
-      </View>
-    </SafeAreaView>
+    <>
+      <StatusBar barStyle="light-content" />
+      <SafeAreaView className="flex-1 bg-background">
+        <ChatNavbar />
+        <View className="flex-1">
+          <Slot />
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 

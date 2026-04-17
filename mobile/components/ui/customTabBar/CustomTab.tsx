@@ -17,6 +17,7 @@ const CustomTab = ({
   iconName: string;
   label: string;
   focused: boolean;
+  onPress: (event: GestureResponderEvent) => void;
 }) => {
   const scale = useRef(new Animated.Value(1)).current;
   // let focused = accessibilityState?.focused || false;
@@ -48,7 +49,7 @@ const CustomTab = ({
             width: 64,
             height: 64,
             borderRadius: 32,
-            backgroundColor: "#000",
+            backgroundColor: "#1d1d1d",
             alignItems: "center",
             justifyContent: "center",
             elevation: 8,

@@ -3,7 +3,7 @@ import CustomTab from "@/components/ui/customTabBar/CustomTab";
 import { useAuth } from "@/hooks/useAuth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Redirect, Tabs } from "expo-router";
-import { Text, View } from "react-native";
+import { StatusBar, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Mater from "react-native-vector-icons/MaterialIcons";
 
@@ -14,17 +14,20 @@ export default function DashboardLayout() {
   if (!user) return <Redirect href="/(auth)/login" />;
 
   return (
-    <>
-      <SafeAreaView edges={["top"]}>
-        <DashboardNavbar />
-      </SafeAreaView>
+    <SafeAreaView className="flex-1 bg-background">
+      <StatusBar barStyle="light-content" />
+      {/* <SafeAreaView edges={["top"]}> */}
+      <DashboardNavbar />
+      {/* </SafeAreaView> */}
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: "#E8DC2A",
-            height: 80,
+            backgroundColor: "#1a1a1a",
+            height: 70,
+            borderTopWidth: 1,
+            borderTopColor: "#333",
           },
           tabBarItemStyle: {
             justifyContent: "center",
@@ -59,6 +62,6 @@ export default function DashboardLayout() {
           }}
         />
       </Tabs>
-    </>
+    </SafeAreaView>
   );
 }

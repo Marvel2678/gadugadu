@@ -44,78 +44,69 @@ export default function Login() {
     }
   };
   return (
-    <SafeAreaView className="flex-1 px-4 bg-background">
-      {/* HEADER */}
-      <View className="pt-6 pb-4">
-        <Text className="text-3xl font-bold text-accent">GaduGadu</Text>
-        <Text className="text-lg text-textSecondary">
-          Zaloguj się do swojego konta
-        </Text>
-      </View>
-
-      {/* CHAT */}
-      <View className="flex-1 justify-end pb-6">
-        <View className="flex flex-col">
-          {/* Bot message */}
-          <MessageBubble
-            text="Podaj email albo nazwę użytkownika 👇"
-            isUser={false}
-          />
-
-          {/* INPUT jako bubble */}
-          <View className="self-end w-[80%] bg-white rounded-2xl px-4 py-2 mb-2">
-            <TextInput
-              value={usernameOrEmail}
-              onChangeText={setUsernameOrEmail}
-              placeholder="Email / username"
-              placeholderTextColor="#666"
-            />
-          </View>
-
-          {/* Bot message */}
-          <MessageBubble text="Teraz wpisz hasło 🔒" isUser={false} />
-
-          {/* PASSWORD INPUT */}
-          <View className="self-end w-[80%] bg-white rounded-2xl px-4 py-2 mb-2">
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Hasło"
-              secureTextEntry
-              placeholderTextColor="#666"
-            />
-          </View>
-
-          {/* ERROR jako wiadomość */}
-          {err ? <MessageBubble text={err} isUser={false} /> : null}
-
-          {/* ACTION jako wiadomość usera */}
-          <TouchableOpacity
-            className="self-end max-w-[80%] px-4 py-3 rounded-2xl mt-2 bg-accent"
-            onPress={() => {
-              Login();
-              socket.on("connect", () => {
-                console.log("✅ connected", socket.id);
-              });
-            }}
-            activeOpacity={0.8}
-          >
-            <Text className="text-black font-semibold text-right">
-              Zaloguj mnie
-            </Text>
-          </TouchableOpacity>
-
-          {/* REGISTER jako opcja */}
-          <TouchableOpacity
-            className="self-start mt-4"
-            onPress={() => router.push("/register")}
-          >
-            <Text className="text-textSecondary">
-              Nie masz konta?{" "}
-              <Text className="text-accent">Zarejestruj się</Text>
-            </Text>
-          </TouchableOpacity>
+    <SafeAreaView className="flex-1 bg-[#0f0f0f] px-6 justify-center">
+      <View className="w-full max-w-md self-center bg-[#1a1a1a] rounded-2xl p-6 border border-[#333]">
+        {/* LOGO / BRAND */}
+        <View className="mb-6">
+          <Text className="text-3xl font-bold text-[#E8DC2A]">GaduGadu</Text>
+          <Text className="text-gray-400 mt-1">Witaj z powrotem 👋</Text>
         </View>
+
+        {/* ERROR */}
+        {err ? <Text className="text-red-400 mb-3">{err}</Text> : null}
+
+        {/* INPUT EMAIL */}
+        <View className="mb-3">
+          <Text className="text-gray-400 mb-1 text-sm">
+            Email lub nazwa użytkownika
+          </Text>
+          <TextInput
+            value={usernameOrEmail}
+            onChangeText={setUsernameOrEmail}
+            placeholder="np. janek123"
+            placeholderTextColor="#666"
+            className="bg-[#262626] text-white rounded-xl px-4 py-3 border border-[#333]"
+          />
+        </View>
+
+        {/* INPUT PASSWORD */}
+        <View className="mb-4">
+          <Text className="text-gray-400 mb-1 text-sm">Hasło</Text>
+          <TextInput
+            value={password}
+            onChangeText={setPassword}
+            placeholder="••••••••"
+            placeholderTextColor="#666"
+            secureTextEntry
+            className="bg-[#262626] text-white rounded-xl px-4 py-3 border border-[#333]"
+          />
+        </View>
+
+        {/* BUTTON */}
+        <TouchableOpacity
+          className="bg-[#E8DC2A] py-3 rounded-xl active:opacity-80"
+          onPress={() => {
+            Login();
+            socket.on("connect", () => {
+              console.log("✅ connected", socket.id);
+            });
+          }}
+        >
+          <Text className="text-center text-black font-semibold text-lg">
+            Zaloguj się
+          </Text>
+        </TouchableOpacity>
+
+        {/* REGISTER */}
+        <TouchableOpacity
+          className="mt-4"
+          onPress={() => router.push("/register")}
+        >
+          <Text className="text-center text-gray-400">
+            Nie masz konta?{" "}
+            <Text className="text-[#E8DC2A]">Zarejestruj się</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
