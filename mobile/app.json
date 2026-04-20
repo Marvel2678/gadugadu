@@ -13,10 +13,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/adaptive-icon/res/mipmap-hdpi/adaptive-fore.png",
+        "backgroundImage": "./assets/adaptive-icon/res/mipmap-hdpi/adaptive-back.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
