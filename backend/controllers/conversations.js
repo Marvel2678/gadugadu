@@ -22,11 +22,9 @@ export const createConversation = async (req, res) => {
       WHERE c.is_group = FALSE
         AND cm.user_id IN ($1, $2)
       GROUP BY c.id
-      HAVING COUNT(DISTINCT cm.user_id) = 2
       `,
         [myUserId, otherUserId],
       );
-
       if (existsConversation.rowCount > 0) {
         return res.json({
           ok: true,

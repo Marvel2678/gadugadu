@@ -25,8 +25,8 @@ const SendMessageFooter = ({ onSend }: Props) => {
   };
 
   return (
-    <View className="w-full bg-brand3 px-3 py-2 border-t border-black/10">
-      <View className="flex-row items-center bg-brand2 rounded-2xl px-3 py-2">
+    <View className="w-full bg-[#262626] px-3 py-2 border-t border-[#a4a4a4]/10">
+      <View className="flex-row items-center bg-[#a4a4a4]/10 rounded-2xl px-3 py-2">
         <TextInput
           className="flex-1 text-white text-base"
           placeholder="Type a message..."
@@ -39,7 +39,7 @@ const SendMessageFooter = ({ onSend }: Props) => {
           className="ml-2 bg-brand1 p-2 rounded-full"
           onPress={handleSend}
         >
-          <FontAwesome name="send" size={16} color="black" />
+          <FontAwesome name="send" size={16} color="white" />
         </TouchableOpacity>
       </View>
     </View>

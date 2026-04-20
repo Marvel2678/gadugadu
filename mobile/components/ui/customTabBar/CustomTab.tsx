@@ -27,7 +27,7 @@ const CustomTab = ({
       friction: 4,
       useNativeDriver: true,
     }).start();
-    console.log(focused);
+    // console.log(focused);
   }, [focused]);
 
   return (

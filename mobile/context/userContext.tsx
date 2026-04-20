@@ -9,6 +9,7 @@ import { apiMiddleware } from "@/utils/middleware";
 type AuthContextType = {
   user: UserType | null;
   loading: boolean;
+  loggedBefore: boolean;
   login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -18,6 +19,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loggedBefore, setLoggedBefore] = useState<boolean>(false);
 
   useEffect(() => {
     getter();
@@ -41,7 +43,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(me);
       setLoading(false);
     } catch (error) {
-      console.log("GETTER ERROR:", error);
+      console.log(error.status);
+      if (error.status === 403) {
+        console.log("REFRESH TOKEN EXPIRED");
+        setLoggedBefore(true);
+      } else {
+        console.log("GETTER ERROR:", error);
+      }
       await logout();
     } finally {
       setLoading(false);
@@ -98,7 +106,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, loggedBefore, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

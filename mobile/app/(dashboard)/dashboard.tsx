@@ -100,6 +100,7 @@ export default function Dashboard() {
 
   return (
     <SafeAreaView className="flex-1 bg-background px-4 pt-4">
+      {/* USER LIST */}
       <FlatList
         data={chats}
         keyExtractor={(item) => item.conversation_id.toString()}

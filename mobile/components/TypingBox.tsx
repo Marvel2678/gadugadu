@@ -3,33 +3,46 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withRepeat,
+  withDelay,
 } from "react-native-reanimated";
 import { View } from "react-native";
 import { useEffect } from "react";
 
 export default function TypingBox() {
-  const scales = [useSharedValue(1), useSharedValue(1), useSharedValue(1)];
+  const dots = [useSharedValue(0), useSharedValue(0), useSharedValue(0)];
 
   useEffect(() => {
-    scales.forEach((dot, index) => {
-      dot.value = withRepeat(withTiming(1.6, { duration: 300 }), -1, true);
+    dots.forEach((dot, index) => {
+      dot.value = withDelay(
+        index * 150, // 👈 klucz!
+        withRepeat(withTiming(1, { duration: 400 }), -1, true),
+      );
     });
   }, []);
 
   return (
-    <View className="my-4 flex h-[10%] w-[30%] items-center justify-center rounded-2xl bg-slate-800 p-5">
-      <View className="flex flex-row items-center justify-between">
-        {scales.map((dot, index) => {
+    <View
+      className="self-start px-4 py-3 rounded-2xl mb-2"
+      style={{
+        backgroundColor: "#262626",
+      }}
+    >
+      <View className="flex-row items-center">
+        {dots.map((dot, index) => {
           const style = useAnimatedStyle(() => ({
-            transform: [{ scale: dot.value }],
-            opacity: dot.value,
+            opacity: 0.3 + dot.value * 0.7,
+            transform: [
+              {
+                translateY: -4 * dot.value, // 👈 bounce zamiast scale
+              },
+            ],
           }));
 
           return (
             <Animated.View
               key={index}
               style={style}
-              className="mx-2 h-2 w-2 rounded-full bg-white"
+              className="w-2 h-2 mx-1 rounded-full bg-white"
             />
           );
         })}

@@ -13,7 +13,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <AuthProvider>
         <ChatProvider>
-          <StatusBar barStyle="dark-content" />
+          <StatusBar barStyle="light-content" />
           <Stack screenOptions={{ headerShown: false }} />
         </ChatProvider>
       </AuthProvider>

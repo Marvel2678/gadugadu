@@ -17,15 +17,16 @@ export default function Root() {
     // if (!user || loading) return;
     const t1 = setTimeout(() => setStep(1), 3000);
     const t2 = setTimeout(() => setStep(2), 6500);
+    const t3 = setTimeout(() => setStep(3), 8000);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      clearTimeout(t3);
     };
   }, []);
   if (loading) {
     return null;
   }
-
   if (user) {
     return <Redirect href="/(dashboard)/dashboard" withAnchor={true} />;
   }
@@ -51,6 +52,14 @@ export default function Root() {
 
           {/* Message 2 */}
           {step === 2 && (
+            <>
+              <MessageBubble
+                text="Chcesz dołączyć do naszej aplikacji?"
+                isUser={false}
+              />
+            </>
+          )}
+          {step === 3 && (
             <>
               <MessageBubble
                 text="Chcesz dołączyć do naszej aplikacji?"

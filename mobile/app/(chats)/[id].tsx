@@ -99,6 +99,7 @@ const Chat = () => {
 
   return (
     <View className="flex-1 bg-background">
+      {/* MESSAGES */}
       <FlatList
         className="flex-1 m-4"
         showsVerticalScrollIndicator={false}
@@ -108,6 +109,7 @@ const Chat = () => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <MessageBox key={item.id} message={item} />}
       ></FlatList>
+      {/* SENDING INPUT */}
       <SendMessageFooter onSend={handleSend} />
     </View>
   );
