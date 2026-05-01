@@ -12,12 +12,14 @@ import React, { use, useEffect, useState } from "react";
 import { apiMiddleware } from "@/utils/middleware";
 import { UserType } from "@/types/UserType";
 import { router } from "expo-router";
+import { useChats } from "@/hooks/useChats";
 
 const CreateChatModal = ({ onClose, visible }) => {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<UserType[]>([]);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
+  const { addChat } = useChats();
 
   let currentQuery = query;
   useEffect(() => {
@@ -53,7 +55,7 @@ const CreateChatModal = ({ onClose, visible }) => {
 
       if (res.data?.users && res.data.ok) {
         setResult(res.data?.users);
-        console.log(result);
+        console.log("Wyniki wyszukiwania:", result);
       } else {
         setErr(res.data.message);
       }
@@ -69,20 +71,26 @@ const CreateChatModal = ({ onClose, visible }) => {
 
   const handleSelectUser = async (user) => {
     try {
+      if (!user || !user.id || user.id === null) {
+        return setErr("Nie można znaleźć tego użytkownika");
+      }
       const res = await apiMiddleware.post("/conversation/create", {
-        users: [user.id],
+        users: [{ id: user.id }],
       });
       if (res.data.ok) {
-        const conversation_id = res.data.conversation_id;
-        router.push(`/(chats)/${conversation_id}`);
+        const chat = res.data.conversation;
+        addChat(chat);
         onClose();
         setQuery("");
         setResult([]);
+        router.replace(`/(chats)/${chat.conversation_id}`);
       } else {
         setErr(res.data.message);
       }
     } catch (error) {
       console.log("Error in creating conversation", error);
+    } finally {
+      setLoading(false);
     }
   };
 

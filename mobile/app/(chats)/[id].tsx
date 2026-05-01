@@ -1,3 +1,4 @@
+import ChatNavbar from "@/components/elements/navbars/ChatNavbar";
 import MessageBox from "@/components/MessageBox";
 import SendMessageFooter from "@/components/SendMessageFooter";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,16 +11,10 @@ import { useEffect, useRef, useState } from "react";
 import { Text, View, ScrollView, FlatList } from "react-native";
 
 const Chat = () => {
-  const { id: conversation_id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const conversation_id = parseInt(id);
   const listRef = useRef<FlatList>(null);
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    <View>
-      <Text>Loading...</Text>
-    </View>;
-  }
 
   useEffect(() => {
     try {
@@ -28,7 +23,6 @@ const Chat = () => {
         socket.emit("conversation:join", conversation_id);
         console.log("JOINED✅");
       };
-
       init();
       return () => {
         socket.emit("conversation:leave", conversation_id);
@@ -98,20 +92,23 @@ const Chat = () => {
   };
 
   return (
-    <View className="flex-1 bg-background">
-      {/* MESSAGES */}
-      <FlatList
-        className="flex-1 m-4"
-        showsVerticalScrollIndicator={false}
-        inverted
-        ref={listRef}
-        data={messages}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <MessageBox key={item.id} message={item} />}
-      ></FlatList>
-      {/* SENDING INPUT */}
-      <SendMessageFooter onSend={handleSend} />
-    </View>
+    <>
+      <ChatNavbar conversation_id={conversation_id} />
+      <View className="flex-1 bg-background">
+        {/* MESSAGES */}
+        <FlatList
+          className="flex-1 m-4"
+          showsVerticalScrollIndicator={false}
+          inverted
+          ref={listRef}
+          data={messages}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <MessageBox key={item.id} message={item} />}
+        ></FlatList>
+        {/* SENDING INPUT */}
+        <SendMessageFooter onSend={handleSend} />
+      </View>
+    </>
   );
 };
 

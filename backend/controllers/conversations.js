@@ -1,19 +1,22 @@
 import { db } from "../index.js";
 import {
+  getConversationFromId,
   getOtherUsers,
   getUserConversations,
 } from "../services/conversation.service.js";
+import { getMessagesFromPrivateConversations } from "../services/messages.service.js";
 
 export const createConversation = async (req, res) => {
   try {
     const { users } = req.body; // array user IDs
-    const user_from_req = req.user.id;
+    const myUserId = req.user.id;
+    const otherUserId = users[0].id;
+
+    console.log("JAKI JEST OTHER_USER_ID", otherUserId);
+    console.log("CREATE CONVERSATION USERS", users);
 
     //Checking is there private conversation in database and returning conversations.id
     if (users.length === 1) {
-      const otherUserId = users[0].id;
-      const myUserId = req.user.id;
-
       const existsConversation = await db.query(
         `
       SELECT c.id
@@ -43,37 +46,31 @@ export const createConversation = async (req, res) => {
     await db.query(
       `INSERT INTO conversation_members (name, conversation_id, user_id)
        VALUES ($1, $2, $3)`,
-      ["Konwersacja prywatna", conversation_id, user_from_req],
+      ["Konwersacja prywatna", conversation_id, otherUserId],
+    );
+    await db.query(
+      `INSERT INTO conversation_members (name, conversation_id, user_id)
+       VALUES ($1, $2, $3)`,
+      ["Konwersacja prywatna", conversation_id, myUserId],
     );
 
-    for (const user of users) {
-      await db.query(
-        `INSERT INTO conversation_members (name, conversation_id, user_id)
-         VALUES ($1, $2, $3)`,
-        [`Konwersacja z ${user_from_req}`, conversation_id, user.id],
-      );
-    }
+    // for (const user of users) {
+    //   await db.query(
+    //     `INSERT INTO conversation_members (name, conversation_id, user_id)
+    //      VALUES ($1, $2, $3)`,
+    //     [`Konwersacja z ${user_from_req}`, conversation_id, user.id],
+    //   );
+    // }
+
+    const conversation = await getConversationFromId(conversation_id, myUserId);
 
     return res.status(201).json({
       ok: true,
-      conversation_id,
+      conversation,
       existed: false,
     });
   } catch (error) {
     console.error("CREATE CONVERSATION ERROR:", error);
-    return res.status(500).json({ ok: false, message: "Server error" });
-  }
-};
-
-export const getConversationMessages = async (req, res) => {
-  const { conversation_id } = req.body;
-
-  try {
-    const messages = await getMessagesFromPrivateConversations(conversation_id);
-
-    res.json({ ok: true, messages });
-  } catch (error) {
-    console.error("GET MESSAGES ERROR:", error);
     return res.status(500).json({ ok: false, message: "Server error" });
   }
 };
@@ -95,6 +92,19 @@ export const getConversations = async (req, res) => {
     return res.json({ ok: true, conversations });
   } catch (error) {
     console.error("GET CONVERSATIONS ERROR:", error);
+    return res.status(500).json({ ok: false, message: "Server error" });
+  }
+};
+
+export const getConversationMessages = async (req, res) => {
+  const { conversation_id } = req.body;
+
+  try {
+    const messages = await getMessagesFromPrivateConversations(conversation_id);
+
+    res.json({ ok: true, messages });
+  } catch (error) {
+    console.error("GET MESSAGES ERROR:", error);
     return res.status(500).json({ ok: false, message: "Server error" });
   }
 };

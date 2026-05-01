@@ -2,6 +2,7 @@ import ChatListElement from "@/components/elements/ChatListElement";
 import CreateChatModal from "@/components/elements/modals/CreateChatModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useChats } from "@/hooks/useChats";
+import { getChatsRequest } from "@/services/chats.service";
 import { ChatType } from "@/types/ChatsType";
 import { AppConfig } from "@/utils/appConfig";
 import { apiMiddleware } from "@/utils/middleware";
@@ -23,7 +24,6 @@ export default function Dashboard() {
   const router = useRouter();
   const { chats, setChats } = useChats();
   const [open, setOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
     getChats();
     const onUserOnline = (data) => {
@@ -71,11 +71,8 @@ export default function Dashboard() {
 
   const getChats = async () => {
     try {
-      const res = await apiMiddleware.get(
-        AppConfig.SERVER_URL + "/conversation/getConversations",
-      );
-      console.log(res);
-      const data = res.data;
+      const data = await getChatsRequest();
+      console.log(data);
       setChats(data.conversations);
     } catch (error) {
       console.log(error);

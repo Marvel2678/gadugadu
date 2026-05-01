@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { getMe } from "@/services/auth.service";
+import { getMe, loginRequest } from "@/services/auth.service";
 import { reconnectAndSyncSocket, socket } from "@/utils/socket";
 import { tokenStorage } from "@/utils/token.storage";
 import { UserType } from "@/types/UserType";
@@ -9,7 +9,6 @@ import { apiMiddleware } from "@/utils/middleware";
 type AuthContextType = {
   user: UserType | null;
   loading: boolean;
-  loggedBefore: boolean;
   login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -19,7 +18,6 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [loggedBefore, setLoggedBefore] = useState<boolean>(false);
 
   useEffect(() => {
     getter();
@@ -46,7 +44,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log(error.status);
       if (error.status === 403) {
         console.log("REFRESH TOKEN EXPIRED");
-        setLoggedBefore(true);
       } else {
         console.log("GETTER ERROR:", error);
       }
@@ -56,22 +53,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const login = async (accessToken: string, refreshToken: string) => {
+  const login = async (usernameOrEmail: string, password: string) => {
+    setLoading(true);
     try {
-      setLoading(true);
+      const { refreshToken, accessToken } = await loginRequest(
+        usernameOrEmail,
+        password,
+      );
       await tokenStorage.setRefreshToken(refreshToken);
       await tokenStorage.setAccessToken(accessToken);
-
-      socket.auth = { token: await tokenStorage.getAccessToken() };
-      socket.connect();
       const res = await getMe();
-
+      if (!res?.user) {
+        console.log("GETME RESPONSE:", res);
+        throw new Error("Nie udało się pobrać użytkownika");
+      }
       const me = res.user;
+      socket.auth = { token: await tokenStorage.getAccessToken() };
       socket.user_id = me.id;
+      socket.connect();
       console.log("SOCKET CONNECTED ✅");
       setUser(me);
-    } catch (error) {
-      console.log("CONTEXT LOGIN ERROR:", error);
     } finally {
       setLoading(false);
     }
@@ -106,9 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, loggedBefore, login, logout }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -13,8 +13,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon/res/mipmap-hdpi/adaptive-fore.png",
-        "backgroundImage": "./assets/adaptive-icon/res/mipmap-hdpi/adaptive-back.png",
+        "foregroundImage": "./assets/images/adaptive_icon/res/mipmap-hdpi/adaptive_fore.png",
+        "backgroundImage": "./assets/images/adaptive_icon/res/mipmap-hdpi/adaptive_back.png",
         "resizeMode": "contain",
         "backgroundColor": "#ffffff"
       },

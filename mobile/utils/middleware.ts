@@ -41,8 +41,8 @@ apiMiddleware.interceptors.response.use(
             },
             { headers: { skipAuth: true } },
           );
-          const { accessToken } = res.data;
           console.log("RESET");
+          const { accessToken } = res.data;
           await tokenStorage.setAccessToken(accessToken);
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return apiMiddleware(originalRequest);

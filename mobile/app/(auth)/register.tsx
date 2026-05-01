@@ -100,7 +100,6 @@ export default function Register() {
             onChangeText={setEmail}
             placeholder="jan.kowalski@example.com"
             placeholderTextColor="#666"
-            secureTextEntry
             className="bg-[#262626] text-white rounded-xl px-4 py-3 border border-[#333]"
           />
         </View>

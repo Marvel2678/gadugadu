@@ -6,15 +6,28 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import defaultProfileImage from "@/assets/images/default_profile_image.jpg";
 import { FontAwesome } from "@react-native-vector-icons/fontawesome";
 
-export default function ChatNavbar() {
+export default function ChatNavbar({
+  conversation_id,
+}: {
+  conversation_id: number;
+}) {
+  const id = conversation_id;
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const { getChatById } = useChats();
-  const chat = getChatById(parseInt(id));
-  const user = chat?.other_users[0] as UserType;
+  const { getChatById, chats } = useChats();
+  const [user, setUser] = React.useState<UserType | null>(null);
 
-  const handleBackToChat = () => {
-    router.back();
+  useEffect(() => {
+    const chat = getChatById(id);
+    console.log("Jak wygląda chat: ", id, chats);
+    if (chat) {
+      setUser(chat.other_users[0]);
+    } else {
+      console.log("Nie można znaleźć czatu o ID:", id);
+    }
+  }, [id]);
+
+  const handleBackButton = () => {
+    router.push("/(dashboard)/dashboard");
   };
   return (
     <View
@@ -26,7 +39,7 @@ export default function ChatNavbar() {
       }}
     >
       {/* BACK */}
-      <TouchableOpacity onPress={() => router.back()} className="mr-3">
+      <TouchableOpacity onPress={() => handleBackButton()} className="mr-3">
         <FontAwesome name="arrow-left" size={20} color="#E8DC2A" />
       </TouchableOpacity>
 

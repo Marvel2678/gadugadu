@@ -9,15 +9,8 @@ import MessageBox from "@/components/MessageBox";
 import SendMessageFooter from "@/components/SendMessageFooter";
 
 const ChatsLayout = () => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
-  if (loading) {
-    return (
-      <SafeAreaView className="flex-1 bg-brand3 items-center justify-center">
-        <Text className="text-white text-xl">Ładowanie...</Text>
-      </SafeAreaView>
-    );
-  }
   if (user === null) {
     return <Redirect href="/(auth)/login" withAnchor={true} />;
   }
@@ -25,7 +18,6 @@ const ChatsLayout = () => {
     <>
       <StatusBar barStyle="light-content" />
       <SafeAreaView className="flex-1 bg-background">
-        <ChatNavbar />
         <View className="flex-1">
           <Slot />
         </View>

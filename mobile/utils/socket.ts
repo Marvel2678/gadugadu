@@ -17,11 +17,11 @@ export const reconnectAndSyncSocket = async (user: UserType) => {
   try {
     if (token) {
       socket.auth = { token };
+      socket.user_id = user.id;
       if (!socket.connected) {
         socket.connect();
       }
       console.log("CONNECTED ✅");
-      socket.user_id = user.id;
       socket.emit("user:sync", (data) => {
         console.log("USER SYNC EVENT:", data);
       });

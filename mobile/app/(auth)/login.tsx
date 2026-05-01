@@ -1,46 +1,33 @@
-import { View, Text, TextInput, Button, TouchableOpacity } from "react-native";
-import { useRouter } from "expo-router";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useState } from "react";
-import { socket } from "@/utils/socket";
-import { apiMiddleware } from "@/utils/middleware";
-import { useAuth } from "@/hooks/useAuth";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MessageBubble from "@/components/MessageBubble";
+import { loginRequest } from "@/services/auth.service";
+import { useAuth } from "@/hooks/useAuth";
+import { router } from "expo-router";
 
 export default function Login() {
-  const router = useRouter();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
 
-  const Login = async () => {
+  const LoginFn = async (e) => {
+    e.preventDefault();
     try {
       setErr("");
       if (!usernameOrEmail || !password) {
         return setErr("Nie wszystko jest wypełnione");
       }
-
-      const res = await apiMiddleware.post(
-        "/auth/login",
-        {
-          email: usernameOrEmail,
-          password,
-        },
-        { headers: { skipAuth: true } },
-      );
-
-      const data = res.data;
-      console.log(data);
-      if (!data.ok) {
-        return setErr(data.message || "Błąd logowania");
-      }
-
-      await login(data.accessToken, data.refreshToken);
+      await login(usernameOrEmail, password);
     } catch (err: unknown) {
-      setErr("Brak połączenia z serwerem");
-      console.log(err);
-      console.log(err?.response?.message);
+      if (err.response?.data?.message) {
+        setErr(err.response.data.message);
+      }
+      if (err.response?.status === 401) {
+        setErr("Nieprawidłowy email lub hasło");
+      } else {
+        setErr("Nie można się zalogować");
+      }
     }
   };
   return (
@@ -85,11 +72,8 @@ export default function Login() {
         {/* BUTTON */}
         <TouchableOpacity
           className="bg-[#E8DC2A] py-3 rounded-xl active:opacity-80"
-          onPress={() => {
-            Login();
-            socket.on("connect", () => {
-              console.log("✅ connected", socket.id);
-            });
+          onPress={(e) => {
+            LoginFn(e);
           }}
         >
           <Text className="text-center text-black font-semibold text-lg">

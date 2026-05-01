@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 
 export default function ChatListElement({ chat }: { chat: ChatType }) {
   const router = useRouter();
+  console.log("User in chat:", chat.other_users[0]);
   const user = chat.other_users[0]; // Assuming one-on-one chat for simplicity
   const handlePress = () => {
     router.push({
@@ -26,7 +27,7 @@ export default function ChatListElement({ chat }: { chat: ChatType }) {
       <View className="relative mr-3">
         <Image
           source={
-            user?.avatar
+            user?.avatar && user.avatar !== null
               ? { uri: user.avatar }
               : require("@/assets/images/default_profile_image.jpg")
           }

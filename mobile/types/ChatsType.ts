@@ -6,6 +6,7 @@ export type ChatType = {
   other_users: {
     user_id: number;
     username: string;
+    avatar: string | null;
     online: boolean;
   }[];
 };

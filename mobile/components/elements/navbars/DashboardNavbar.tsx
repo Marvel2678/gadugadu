@@ -36,7 +36,7 @@ const DashboardNavbar = () => {
             source={
               user?.avatar
                 ? { uri: user.avatar }
-                : require("@/assets/images/default_profile_image.jpg")
+                : require("@assets/images/default_profile_image.jpg")
             }
             style={{
               width: 40,

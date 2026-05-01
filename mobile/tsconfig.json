@@ -2,6 +2,7 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "types": ["jest", "react-native", "react-test-renderer"],
     "paths": {
       "@/*": ["./*"],
       "@assets/*": ["./assets/*"]
@@ -12,6 +13,16 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "nativewind-env.d.ts"
+    "nativewind-env.d.ts",
+    "react-native-svg.d.ts",
+    "react-native-reanimated.d.ts",
+    "react-native-gesture-handler.d.ts",
+    "react-native-safe-area-context.d.ts",
+    "react-native-screens.d.ts",
+    "react-native-appearance.d.ts",
+    "react-native-vector-icons.d.ts",
+    "react-native-async-storage.d.ts",
+    "react-native-community/datetimepicker.d.ts",
+    "jest.config.js"
   ]
 }

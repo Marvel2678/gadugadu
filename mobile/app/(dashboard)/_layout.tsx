@@ -11,7 +11,7 @@ export default function DashboardLayout() {
   const { user, loading } = useAuth();
 
   if (loading) return <Text>Loading</Text>;
-  if (!user) return <Redirect href="/(auth)/login" />;
+  if (!user) return <Redirect href="/(auth)/login" withAnchor />;
 
   return (
     <SafeAreaView className="flex-1 bg-background">
