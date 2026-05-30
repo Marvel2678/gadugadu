@@ -1,12 +1,9 @@
-import {
-  createMessageFunc,
-  getMessagesFromPrivateConversations,
-} from "../services/messages.service.js";
+import { messageService } from "../services/messages.service.js";
 
 export const getMessages = async (req, res) => {
   const { conversation_id } = req.params;
   try {
-    const messages = await getMessagesFromPrivateConversations(conversation_id);
+    const messages = await messageService.getMessages(conversation_id);
     return res.status(200).json({ messages });
   } catch (error) {
     console.error("GET MESSAGES ERROR:", error);
@@ -22,11 +19,11 @@ export const createMessage = async (req, res) => {
     if ((!conversation_id, !sender_id || !type || !text)) {
       return res.status(400).json({ error: "Invalid message data" });
     }
-    const { message_id } = await createMessageFunc(
+    const { message_id } = await messageService.createMessage(
       conversation_id,
       sender_id,
       type,
-      text
+      text,
     );
 
     return res.status(201).json({

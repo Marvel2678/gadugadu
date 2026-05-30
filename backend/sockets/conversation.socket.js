@@ -3,13 +3,12 @@ import { db } from "../index.js";
 export async function registerConversationSocket(io, socket) {
   socket.on("conversation:join", async (conversation_id) => {
     try {
-      console.log("TUUUU");
       socket.join(`conversation:${conversation_id}`);
       console.log("User has joined to conversation ", conversation_id);
 
       await db.query(
         "UPDATE messages SET delivered=TRUE WHERE sender_id != $1 AND conversation_id = $2 AND delivered = FAlSE",
-        [socket.user_id, conversation_id]
+        [socket.user_id, conversation_id],
       );
     } catch (error) {
       console.log("ERROR in conversation Socket: ", error);

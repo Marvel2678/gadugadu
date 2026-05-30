@@ -5,6 +5,8 @@ import { reconnectAndSyncSocket, socket } from "@/utils/socket";
 import { tokenStorage } from "@/utils/token.storage";
 import { UserType } from "@/types/UserType";
 import { apiMiddleware } from "@/utils/middleware";
+import { deviceName, getPlatform, getPushToken } from "@/utils/deviceInfo";
+import { RegisterPushToken } from "@/services/user.service";
 
 type AuthContextType = {
   user: UserType | null;
@@ -33,13 +35,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       const res = await getMe();
       if (res.ok === false) {
-        return new Error("Unauthorized");
+        throw new Error("Unauthorized");
       }
       reconnectAndSyncSocket(res.user);
       console.log("REFRESHING SOCKET ✅");
       const me = res.user;
+      try {
+        const pushToken = await getPushToken();
+
+        if (pushToken) {
+          console.log("PUSH TOKEN:", pushToken);
+          console.log("Platform: ", getPlatform());
+          console.log("Device Name: ", deviceName());
+          console.log("Device Name: ", deviceName());
+
+          await RegisterPushToken(
+            me.id,
+            pushToken,
+            getPlatform(),
+            deviceName(),
+          );
+        }
+      } catch (pushError) {
+        console.error("Error fetching push token:", pushError.message);
+      }
       setUser(me);
-      setLoading(false);
     } catch (error) {
       console.log(error.status);
       if (error.status === 403) {
@@ -55,24 +75,49 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (usernameOrEmail: string, password: string) => {
     setLoading(true);
+
     try {
-      const { refreshToken, accessToken } = await loginRequest(
+      const { ok, refreshToken, accessToken, message } = await loginRequest(
         usernameOrEmail,
         password,
       );
+      if (!ok) {
+        console.error("TUTAJ");
+        throw new Error(message || "Nie można się zalogować", {
+          cause: "LOGIN_FAILED",
+        });
+      }
+
       await tokenStorage.setRefreshToken(refreshToken);
       await tokenStorage.setAccessToken(accessToken);
+
       const res = await getMe();
+
       if (!res?.user) {
-        console.log("GETME RESPONSE:", res);
-        throw new Error("Nie udało się pobrać użytkownika");
+        throw new Error("Nie udało się pobrać użytkownika", {
+          cause: "LOGIN_FAILED",
+        });
       }
+
       const me = res.user;
-      socket.auth = { token: await tokenStorage.getAccessToken() };
+
+      // SOCKET
+      socket.auth = {
+        token: accessToken,
+      };
+
       socket.user_id = me.id;
+
       socket.connect();
-      console.log("SOCKET CONNECTED ✅");
+
+      socket.on("connect", () => {
+        console.log("SOCKET CONNECTED ✅");
+      });
+
       setUser(me);
+    } catch (error) {
+      console.log("LOGIN ERROR:", error);
+      throw error;
     } finally {
       setLoading(false);
     }

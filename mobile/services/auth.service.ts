@@ -9,7 +9,12 @@ export async function getMe() {
 export async function loginRequest(
   usernameOrEmail: string,
   password: string,
-): Promise<{ accessToken: string; refreshToken: string }> {
+): Promise<{
+  ok: boolean;
+  accessToken: string;
+  refreshToken: string;
+  message?: string;
+}> {
   const res = await apiMiddleware.post(
     "/auth/login",
     {

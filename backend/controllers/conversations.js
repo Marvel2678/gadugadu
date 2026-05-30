@@ -4,7 +4,7 @@ import {
   getOtherUsers,
   getUserConversations,
 } from "../services/conversation.service.js";
-import { getMessagesFromPrivateConversations } from "../services/messages.service.js";
+import { messageService } from "../services/messages.service.js";
 
 export const createConversation = async (req, res) => {
   try {
@@ -100,7 +100,7 @@ export const getConversationMessages = async (req, res) => {
   const { conversation_id } = req.body;
 
   try {
-    const messages = await getMessagesFromPrivateConversations(conversation_id);
+    const messages = await messageService.getMessages(conversation_id);
 
     res.json({ ok: true, messages });
   } catch (error) {

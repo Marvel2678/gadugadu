@@ -1,6 +1,7 @@
-import { createMessage } from "../controllers/messages.js";
-import { db } from "../index.js";
-import { createMessageFunc } from "../services/messages.service.js";
+import { db, expo } from "../index.js";
+import { messageService } from "../services/messages.service.js";
+import { notifyService } from "../services/notify.service.js";
+import { presenceService } from "../services/presence.service.js";
 
 export function registerMessageSocket(io, socket) {
   socket.on(
@@ -9,15 +10,15 @@ export function registerMessageSocket(io, socket) {
       try {
         const isMember = await db.query(
           "SELECT 1 FROM conversation_members WHERE conversation_id=$1 AND user_id=$2",
-          [conversation_id, socket.user_id]
+          [conversation_id, socket.user_id],
         );
 
         if (!isMember.rowCount) return;
-        const { message_id } = await createMessageFunc(
+        const { message_id } = await messageService.createMessage(
           conversation_id,
           socket.user_id,
           type,
-          text
+          text,
         );
         const message = {
           id: message_id || temp_id,
@@ -26,6 +27,17 @@ export function registerMessageSocket(io, socket) {
           type,
           text,
         };
+        const isUserOnline = await presenceService.IsUserOnline(
+          conversation_id,
+          socket.user_id,
+        );
+        if (!isUserOnline) {
+          const pushTokens = await notifyService.getPushTokens(
+            conversation_id,
+            socket.user_id,
+          );
+          notifyService.sendNotification(expo, pushTokens, "Nowa wiadomość");
+        }
         io.to(`conversation:${conversation_id}`).emit("message:new", {
           message: message,
           temp_id: temp_id,
@@ -38,14 +50,14 @@ export function registerMessageSocket(io, socket) {
         // });
         console.log("SOCKET MESSAGE ERROR", error);
       }
-    }
+    },
   );
 
   socket.on("message:seen", async ({ conversation_id }) => {
     try {
       await db.query(
         "UPDATE messages SET seen=TRUE WHERE conversation_id=$1 AND sender_id != $2 AND seen = FALSE",
-        [conversation_id, socket.user_id]
+        [conversation_id, socket.user_id],
       );
       io.to(`conversation:${conversation_id}`).emit("message:seen", {
         conversationId: conversation_id,

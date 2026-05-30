@@ -7,12 +7,13 @@ import {
 } from "../utils/createTokens.js";
 import jwt from "jsonwebtoken";
 import { EmailValidator } from "../utils/validator.js";
+import { pushTokenService } from "../services/pushToken.service.js";
 
 export const RegisterUser = async (req, res) => {
   const { name, username, email, password } = req.body;
 
   if (!name || !username || !email || !password) {
-    return res.json({
+    return res.status(400).json({
       ok: false,
       message: "You have to complete all boxes",
     });
@@ -38,12 +39,14 @@ export const RegisterUser = async (req, res) => {
   }
   const EmailValidatorDetails = EmailValidator(email);
   if (!EmailValidatorDetails === null) {
-    return res.json({ ok: false, message: EmailValidatorDetails });
+    return res.status(400).json({ ok: false, message: EmailValidatorDetails });
   }
 
   const PasswordValidatorDetails = EmailValidator(email);
   if (!PasswordValidatorDetails === null) {
-    return res.json({ ok: false, message: PasswordValidatorDetails });
+    return res
+      .status(400)
+      .json({ ok: false, message: PasswordValidatorDetails });
   }
 
   const hashed = await bcrypt.hash(password, 10);
@@ -66,7 +69,9 @@ export const LoginUser = async (req, res) => {
     const user = result.rows[0];
 
     if (!user || user === undefined)
-      return res.json({ ok: false, message: "Invalid email or password" });
+      return res
+        .status(400)
+        .json({ ok: false, message: "Invalid email or password" });
 
     const valid = await bcrypt.compare(password, user.password);
 
@@ -87,7 +92,7 @@ export const LoginUser = async (req, res) => {
       user.id,
     ]);
 
-    res.json({ ok: true, accessToken, refreshToken });
+    res.status(200).json({ ok: true, accessToken, refreshToken });
   } catch (error) {
     console.error("LOGIN ERROR:", error);
     return res.status(500).json({ ok: false, message: "Server error" });
@@ -101,9 +106,9 @@ export const GetUser = async (req, res) => {
       [req.user.id],
     );
 
-    return res.json({ ok: true, user: user.rows[0] });
+    return res.status(200).json({ ok: true, user: user.rows[0] });
   } catch (error) {
-    return res.json({ ok: false, message: "Something went wrong" });
+    return res.status(500).json({ ok: false, message: "Something went wrong" });
   }
 };
 
@@ -140,6 +145,29 @@ export const RefreshToken = async (req, res) => {
     return res
       .status(403)
       .json({ ok: false, message: "Could not refresh token" });
+  }
+};
+
+export const UserPushToken = async (req, res) => {
+  const { push_token, platform, device_id } = req.body;
+  const userId = req.user.id;
+  try {
+    if (!push_token || !platform || !device_id) {
+      return res.status(400).json({
+        ok: false,
+        message: "Missing push token, platform or device ID",
+      });
+    }
+    await pushTokenService.addPushToken(
+      push_token,
+      platform,
+      device_id,
+      userId,
+    );
+    return res.status(200).json({ ok: true, message: "Push token updated" });
+  } catch (error) {
+    console.error("Error updating push token:", error);
+    return res.json({ ok: false, message: "Could not update push token" });
   }
 };
 

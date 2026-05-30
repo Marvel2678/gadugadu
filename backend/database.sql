@@ -13,6 +13,17 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE push_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    device_id VARCHAR(255) NOT NULL,
+    token TEXT NOT NULL UNIQUE,
+    platform VARCHAR(50) NOT NULL,  -- ios, android
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    last_used_at TIMESTAMP DEFAULT NOW()
+);
+
 CREATE TABLE conversations (
     id SERIAL PRIMARY KEY,
     is_group BOOLEAN DEFAULT FALSE,

@@ -8,19 +8,22 @@ import conversationRouter from "./routes/conversationRouter.js";
 import http from "http";
 import { initSockets } from "./sockets/socketIndex.js";
 import messageRouter from "./routes/messageRouter.js";
+import Expo from "expo-server-sdk";
 
 const env = await SetupForServer();
 
 const ServerConfiguration = loadConfig(env);
 const app = express();
 const server = http.createServer(app);
-export const db = await ConnectToDatabase(ServerConfiguration);
+export const expo = new Expo();
 
+export const db = await ConnectToDatabase(ServerConfiguration);
 app.use(express.json());
 app.use(
   cors({
     origin: "*",
     credentials: true,
+    contentType: "application/json",
   }),
 );
 app.use("/auth", userRouter);

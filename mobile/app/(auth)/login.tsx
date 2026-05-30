@@ -11,25 +11,40 @@ export default function Login() {
   const [err, setErr] = useState("");
   const { login, loading } = useAuth();
 
+  const [submitting, setSubmitting] = useState(false);
+
   const LoginFn = async (e) => {
     e.preventDefault();
+
     try {
+      setSubmitting(true);
       setErr("");
+
       if (!usernameOrEmail || !password) {
         return setErr("Nie wszystko jest wypełnione");
       }
+
       await login(usernameOrEmail, password);
-    } catch (err: unknown) {
-      if (err.response?.data?.message) {
-        setErr(err.response.data.message);
-      }
-      if (err.response?.status === 401) {
-        setErr("Nieprawidłowy email lub hasło");
+    } catch (err) {
+      if (err instanceof Error && err.cause === "LOGIN_FAILED") {
+        setErr(err.message);
       } else {
+        console.log(err);
         setErr("Nie można się zalogować");
       }
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  if (submitting) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#0f0f0f] px-6 justify-center">
+        <Text className="text-center text-gray-400">Ładowanie...</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-[#0f0f0f] px-6 justify-center">
       <View className="w-full max-w-md self-center bg-[#1a1a1a] rounded-2xl p-6 border border-[#333]">
