@@ -36,7 +36,11 @@ export function registerMessageSocket(io, socket) {
             conversation_id,
             socket.user_id,
           );
-          notifyService.sendNotification(expo, pushTokens, "Nowa wiadomość");
+          await notifyService.sendNotification(
+            expo,
+            pushTokens,
+            "Nowa wiadomość",
+          );
         }
         io.to(`conversation:${conversation_id}`).emit("message:new", {
           message: message,

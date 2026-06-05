@@ -10,7 +10,7 @@ import { RegisterPushToken } from "@/services/user.service";
 
 type AuthContextType = {
   user: UserType | null;
-  loading: boolean;
+  authStatus: "authenticated" | "unauthenticated" | "checking";
   login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -19,7 +19,9 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [authStatus, setAuthStatus] = useState<
+    "authenticated" | "unauthenticated" | "checking"
+  >("checking");
 
   useEffect(() => {
     getter();
@@ -27,10 +29,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getter = async () => {
     try {
-      setLoading(true);
+      setAuthStatus("checking");
       const token = await tokenStorage.getAccessToken();
       if (!token) {
         setUser(null);
+        setAuthStatus("unauthenticated");
         return;
       }
       const res = await getMe();
@@ -60,6 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Error fetching push token:", pushError.message);
       }
       setUser(me);
+      setAuthStatus("authenticated");
     } catch (error) {
       console.log(error.status);
       if (error.status === 403) {
@@ -68,13 +72,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log("GETTER ERROR:", error);
       }
       await logout();
-    } finally {
-      setLoading(false);
+      setAuthStatus("unauthenticated");
     }
   };
 
   const login = async (usernameOrEmail: string, password: string) => {
-    setLoading(true);
+    setAuthStatus("checking");
 
     try {
       const { ok, refreshToken, accessToken, message } = await loginRequest(
@@ -83,6 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       );
       if (!ok) {
         console.error("TUTAJ");
+        setAuthStatus("unauthenticated");
         throw new Error(message || "Nie można się zalogować", {
           cause: "LOGIN_FAILED",
         });
@@ -101,7 +105,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const me = res.user;
 
-      // SOCKET
       socket.auth = {
         token: accessToken,
       };
@@ -115,17 +118,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       setUser(me);
+      setAuthStatus("authenticated");
     } catch (error) {
       console.log("LOGIN ERROR:", error);
+      setAuthStatus("unauthenticated");
       throw error;
-    } finally {
-      setLoading(false);
     }
   };
 
   const logout = async () => {
     try {
-      setLoading(true);
+      setAuthStatus("checking");
       socket.disconnect();
       await tokenStorage.clear();
       // const refreshToken = await tokenStorage.getRefreshToken();
@@ -144,15 +147,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       //   console.log("LOGOUT SUCCESS:", res.data);
       // }
       setUser(null);
+      setAuthStatus("unauthenticated");
     } catch (error) {
       console.log("LOGOUT ERROR:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, authStatus, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

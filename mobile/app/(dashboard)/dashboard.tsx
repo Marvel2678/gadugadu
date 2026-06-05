@@ -80,14 +80,14 @@ export default function Dashboard() {
     }
   };
 
-  const { user, loading } = useAuth();
+  const { user, authStatus } = useAuth();
 
   console.log(user);
 
-  if (user === null) {
+  if (authStatus === "unauthenticated") {
     return router.replace("/(auth)/login");
   }
-  if (loading) {
+  if (authStatus === "checking") {
     return (
       <View className="flex-1 bg-brand3 items-center justify-center">
         <Text className="text-black text-xl">Ładowanie...</Text>

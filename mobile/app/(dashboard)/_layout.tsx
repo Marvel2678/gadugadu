@@ -8,10 +8,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Mater from "react-native-vector-icons/MaterialIcons";
 
 export default function DashboardLayout() {
-  const { user, loading } = useAuth();
-
-  if (loading) return <Text>Loading</Text>;
-  if (!user) return <Redirect href="/(auth)/login" withAnchor />;
+  const { authStatus } = useAuth();
+  if (authStatus === "checking") {
+    return <Text>Loading...</Text>;
+  }
+  if (authStatus === "unauthenticated") {
+    return <Redirect href="/login" withAnchor={true} />;
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background">

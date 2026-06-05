@@ -4,12 +4,13 @@ export const getMessages = async (req, res) => {
   const { conversation_id } = req.params;
   try {
     const messages = await messageService.getMessages(conversation_id);
-    return res.status(200).json({ messages });
+    return res.status(200).json({ ok: true, messages });
   } catch (error) {
     console.error("GET MESSAGES ERROR:", error);
-    return res
-      .status(500)
-      .json({ error: "Something went wrong with fetching messages" });
+    return res.status(500).json({
+      ok: false,
+      error: "Something went wrong with fetching messages",
+    });
   }
 };
 

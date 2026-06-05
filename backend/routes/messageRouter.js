@@ -5,7 +5,7 @@ import { getConversationMessages } from "../controllers/conversations.js";
 
 const messageRouter = express.Router();
 
-messageRouter.get("/getMessages/:conversation_id", auth, getMessages);
+messageRouter.get("/get/:conversation_id", auth, getMessages);
 messageRouter.post("/create", auth, createMessage);
 
 export default messageRouter;

@@ -3,10 +3,12 @@ export type ChatType = {
   is_group: boolean;
   lastMessage: string;
   lastMessageAt: string;
-  other_users: {
-    user_id: number;
-    username: string;
-    avatar: string | null;
-    online: boolean;
-  }[];
+  other_users: OtherUserType[];
+};
+
+export type OtherUserType = {
+  user_id: number;
+  username: string;
+  avatar: string | null;
+  online: boolean;
 };

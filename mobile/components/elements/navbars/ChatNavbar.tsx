@@ -5,6 +5,7 @@ import { useChats } from "@/hooks/useChats";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import defaultProfileImage from "@/assets/images/default_profile_image.jpg";
 import { FontAwesome } from "@react-native-vector-icons/fontawesome";
+import { OtherUserType } from "@/types/ChatsType";
 
 export default function ChatNavbar({
   conversation_id,
@@ -14,7 +15,7 @@ export default function ChatNavbar({
   const id = conversation_id;
   const router = useRouter();
   const { getChatById, chats } = useChats();
-  const [user, setUser] = React.useState<UserType | null>(null);
+  const [user, setUser] = React.useState<OtherUserType | null>(null);
 
   useEffect(() => {
     const chat = getChatById(id);

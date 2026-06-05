@@ -29,7 +29,7 @@ export const createConversation = async (req, res) => {
         [myUserId, otherUserId],
       );
       if (existsConversation.rowCount > 0) {
-        return res.json({
+        return res.status(200).json({
           ok: true,
           conversation_id: existsConversation.rows[0].id,
           existed: true,
@@ -89,7 +89,7 @@ export const getConversations = async (req, res) => {
     for (const conversation of conversations) {
       console.log(conversation.other_users);
     }
-    return res.json({ ok: true, conversations });
+    return res.status(200).json({ ok: true, conversations });
   } catch (error) {
     console.error("GET CONVERSATIONS ERROR:", error);
     return res.status(500).json({ ok: false, message: "Server error" });
@@ -102,7 +102,7 @@ export const getConversationMessages = async (req, res) => {
   try {
     const messages = await messageService.getMessages(conversation_id);
 
-    res.json({ ok: true, messages });
+    return res.status(200).json({ ok: true, messages });
   } catch (error) {
     console.error("GET MESSAGES ERROR:", error);
     return res.status(500).json({ ok: false, message: "Server error" });
@@ -113,7 +113,7 @@ export const searchUsers = async (req, res) => {
   const query = req.query.q;
   try {
     if (query.length < 1 || !query) {
-      return res.json({ ok: true, users: [] });
+      return res.status(200).json({ ok: true, users: [] });
     }
 
     const data = await db.query(
@@ -125,7 +125,7 @@ export const searchUsers = async (req, res) => {
 
     const users = data.rows;
 
-    return res.json({ ok: true, users: users });
+    return res.status(200).json({ ok: true, users: users });
   } catch (error) {
     console.log("Something went wrong with searching a user", error);
     return res.status(500).json({

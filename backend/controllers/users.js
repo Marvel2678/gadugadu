@@ -167,7 +167,9 @@ export const UserPushToken = async (req, res) => {
     return res.status(200).json({ ok: true, message: "Push token updated" });
   } catch (error) {
     console.error("Error updating push token:", error);
-    return res.json({ ok: false, message: "Could not update push token" });
+    return res
+      .status(500)
+      .json({ ok: false, message: "Could not update push token" });
   }
 };
 

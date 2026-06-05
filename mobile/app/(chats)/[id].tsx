@@ -2,6 +2,7 @@ import ChatNavbar from "@/components/elements/navbars/ChatNavbar";
 import MessageBox from "@/components/MessageBox";
 import SendMessageFooter from "@/components/SendMessageFooter";
 import { useAuth } from "@/hooks/useAuth";
+import { messageService } from "@/services/message.service";
 import { MessageType } from "@/types/MessageType";
 import { AppConfig } from "@/utils/appConfig";
 import { apiMiddleware } from "@/utils/middleware";
@@ -19,13 +20,13 @@ const Chat = () => {
   useEffect(() => {
     try {
       const init = async () => {
+        socket.emit("conversation:join", { conversation_id });
         await getMessages();
-        socket.emit("conversation:join", conversation_id);
         console.log("JOINED✅");
       };
       init();
       return () => {
-        socket.emit("conversation:leave", conversation_id);
+        socket.emit("conversation:leave", { conversation_id });
       };
     } catch (error) {
       console.log("Error in getting messages");
@@ -39,7 +40,13 @@ const Chat = () => {
       });
   }, [messages]);
   useEffect(() => {
-    const OnNewMessage = ({ message, temp_id }) => {
+    const OnNewMessage = ({
+      message,
+      temp_id,
+    }: {
+      message: MessageType;
+      temp_id: string;
+    }) => {
       handleNewMessage({ message, temp_id });
     };
     socket.on("message:new", OnNewMessage);
@@ -49,14 +56,18 @@ const Chat = () => {
     };
   }, []);
 
-  const handleNewMessage = ({ message, temp_id }: any) => {
+  const handleNewMessage = ({
+    message,
+    temp_id,
+  }: {
+    message: MessageType;
+    temp_id: string;
+  }) => {
     setMessages((prev) => {
-      console.log("TEMP", temp_id);
-      console.log("MESSAGE", message);
       const exists = prev.some((m) => m.id.toString() === temp_id); // checking is element exists in table
 
       if (exists) {
-        return prev.map((m) => (m.id === temp_id ? message : m));
+        return prev.map((m) => (m.id.toString() === temp_id ? message : m));
       }
 
       return [message, ...prev];
@@ -66,14 +77,7 @@ const Chat = () => {
   const handleSend = async (text: string) => {
     const temp_id = `temp_${Date.now()}`.toString();
     try {
-      console.log("CONVERSATION_ID", conversation_id);
-      socket.emit("message:send", {
-        conversation_id: conversation_id,
-        type: "text",
-        text: text,
-        temp_id: temp_id,
-      });
-      console.log("SENDED");
+      await messageService.sendMessage(conversation_id, text, temp_id);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -81,11 +85,8 @@ const Chat = () => {
 
   const getMessages = async () => {
     try {
-      const res = await apiMiddleware.get(
-        AppConfig.SERVER_URL + `/message/getMessages/${conversation_id}`,
-      );
-      setMessages(res.data.messages);
-      console.log("MESSAGES", res.data.messages);
+      const data = await messageService.getMessages(conversation_id);
+      setMessages(data.messages);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }

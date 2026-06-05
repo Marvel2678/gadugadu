@@ -9,10 +9,12 @@ import MessageBox from "@/components/MessageBox";
 import SendMessageFooter from "@/components/SendMessageFooter";
 
 const ChatsLayout = () => {
-  const { user } = useAuth();
-
-  if (user === null) {
-    return <Redirect href="/(auth)/login" withAnchor={true} />;
+  const { authStatus } = useAuth();
+  if (authStatus === "checking") {
+    return <Text>Loading...</Text>;
+  }
+  if (authStatus === "unauthenticated") {
+    return <Redirect href="/login" withAnchor={true} />;
   }
   return (
     <>

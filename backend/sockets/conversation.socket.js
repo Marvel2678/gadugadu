@@ -1,7 +1,7 @@
 import { db } from "../index.js";
 
 export async function registerConversationSocket(io, socket) {
-  socket.on("conversation:join", async (conversation_id) => {
+  socket.on("conversation:join", async ({ conversation_id }) => {
     try {
       socket.join(`conversation:${conversation_id}`);
       console.log("User has joined to conversation ", conversation_id);
@@ -18,11 +18,13 @@ export async function registerConversationSocket(io, socket) {
     //   conversationId: conversation_id,
     // });
   });
-  socket.on("conversation:leave", ({ conversation_id }) => {
+  socket.on("conversation:leave", ({ conversation_id } = {}) => {
+    if (!conversation_id) return;
+
     socket.leave(`conversation:${conversation_id}`);
   });
 
-  socket.on("conversation:create", (conversation_id) => {
+  socket.on("conversation:create", ({ conversation_id }) => {
     //Do wdrożenia realtime dodawania konwersacji
   });
 

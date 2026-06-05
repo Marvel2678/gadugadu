@@ -4,16 +4,11 @@ import { StatusBar, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AuthLayout() {
-  const { user } = useAuth();
-
-  // if (loading) {
-  //   return (
-  //     <SafeAreaView className="flex-1 bg-brand3 items-center justify-center">
-  //       <Text className="text-black text-xl">Ładowanie...</Text>
-  //     </SafeAreaView>
-  //   );
-  // }
-  if (user !== null) {
+  const { authStatus } = useAuth();
+  if (authStatus === "checking") {
+    return <Text>Loading...</Text>;
+  }
+  if (authStatus === "authenticated") {
     return <Redirect href="/(dashboard)/dashboard" withAnchor={true} />;
   }
 
